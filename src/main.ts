@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import { authRoutes } from "./routes/auth.routes"
 import { UsersRoute } from "./routes/user.routes";
 import { text2speechRoutes } from './routes/text2speech.routes'
-import path from 'path'
+
 
 import initializeMongoose from './config/mongoose';
 

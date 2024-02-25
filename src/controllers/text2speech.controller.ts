@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 import fs from 'fs';
 import { PassThrough } from 'stream';
-import Speaker from 'speaker';
 
 export async function text2Speech(req: Request, res: Response) {
 
