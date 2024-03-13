@@ -1,7 +1,7 @@
 import { Application } from "express";
 
 import {
-    signUserInWithEmailPassword
+    signUserInWithEmailPassword ,signUserUpWithEmailPassword
 } from "../controllers/auth.controller";
 
 export function authRoutes(app: Application) {
@@ -11,6 +11,11 @@ export function authRoutes(app: Application) {
     **/
     app.post("/login",
     signUserInWithEmailPassword
+);
+
+
+app.post("/register",
+signUserUpWithEmailPassword
 );
 
     

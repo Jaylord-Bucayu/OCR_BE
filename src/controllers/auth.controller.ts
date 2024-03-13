@@ -4,6 +4,7 @@ import User from '../models/user';
 import Auth from '../models/auth';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+require('dotenv').config();
 
 export async function signUserInWithEmailPassword(req: Request, res: Response) {
 
@@ -15,9 +16,9 @@ if (!appKey) {
 }
 
     const data = req.body;
-        if (!data.username) data.username = data.username.toLowerCase();
+        // if (!data.username) data.username = data.username.toLowerCase();
 
-       if (data.email != null) data.email = data.email.toLowerCase();
+    //    if (data.email != null) data.email = data.email.toLowerCase();
         
         let auth = null;
 
@@ -84,4 +85,78 @@ if (!appKey) {
             });
   
 
+}
+
+export async function signUserUpWithEmailPassword(req: Request, res:Response) {
+
+
+    const data = req.body;
+
+
+    
+
+  
+    var existingAuth = await Auth.find({ email: data.email });
+
+
+    if (existingAuth.length != 0) {
+        return res.send({
+            'status': 'failed',
+            'message': 'This email is already being used by another account',
+        });
+    }
+
+    // if (data.email != null) {
+    //     // data.email = data.email.toLowerCase();
+    // }
+
+    var auth = new Auth({
+        email: data.email,
+        password: bcrypt.hashSync(data.password, 10),
+       
+    });
+
+  
+
+    await auth.save()
+
+
+
+   
+
+    const token = jwt.sign({ auth: auth.id }, "kjjwqe2", {
+        expiresIn: '30d'
+    });
+
+    res.cookie("jwt", token, {
+        secure: process.env.APP_ENV !== "development",
+        httpOnly: true,
+        sameSite: 'strict'
+    });
+
+    auth = auth.toJSON();
+    
+
+   var user = await User.findByIdAndUpdate(auth.id, {}, { new: true, upsert: true });
+
+   user.firstname = data.firstname,
+    user.lastname = data.lastname;
+  await user.save();
+   //var user = await User.findByIdAndUpdate(auth.id, {}, { new: true, upsert: true });
+
+
+
+   
+
+    res.send({
+        'status': 'success',
+        'message': 'Registered successfully.',
+        'data': {
+            'auth': {
+                ...auth,
+                ...user.toJSON()
+            },
+            'token': token,
+        },
+    });
 }

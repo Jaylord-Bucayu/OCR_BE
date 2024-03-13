@@ -13,6 +13,8 @@ import { createWorker } from 'tesseract.js';
 //   await worker.terminate();
 // })();
 
+
+
 export async function text2Speech(_: Request, res: Response) {
 
     
@@ -24,7 +26,7 @@ export async function text2Speech(_: Request, res: Response) {
   };
 
   const worker = await createWorker('eng');
-  const ret = await worker.recognize('https://tesseract.projectnaptha.com/img/eng_bw.png');
+  await worker.recognize('https://tesseract.projectnaptha.com/img/eng_bw.png');
 
   await worker.terminate();
 
@@ -36,7 +38,8 @@ const lyric = `Give me one second to think about it. <break time="1.5s" /> Yes, 
     "model_id": "eleven_monolingual_v1",
     "voice_settings": {
       "stability": 0.5,
-      "similarity_boost": 0.5
+      "similarity_boost": 0.5,
+       "speaking_rate":0.5
     }
   };
 

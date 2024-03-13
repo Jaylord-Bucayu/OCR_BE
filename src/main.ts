@@ -2,19 +2,22 @@
 import express  from "express";
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
 
 import { authRoutes } from "./routes/auth.routes"
 import { UsersRoute } from "./routes/user.routes";
 import { text2speechRoutes } from './routes/text2speech.routes'
-
+import {BooksRoutes} from "./routes/books.routes"
 
 import initializeMongoose from './config/mongoose';
+import 'dotenv/config';
 
 const app = express();
 const port = 5000;
 // Enable CORS
 app.use(cors());
 app.use(bodyParser.json());
+app.use(fileUpload())
 
 
 // Set up a route to serve audio files
@@ -24,8 +27,15 @@ initializeMongoose();
 authRoutes(app);
 UsersRoute(app);
 text2speechRoutes(app);
+BooksRoutes(app);
 
+//@ts-ignoreconst fs = require('fs');
+// import fs from 'fs'
+// const { RealtimeSession } = require('speechmatics');
 
+// const API_KEY = 'tBLz13Pahs4QpAMfc9TFPr9nVMmkNP9z';
+
+<<<<<<< HEAD
 // import { createWorker } from 'tesseract.js';
 
 // (async () => {
@@ -121,7 +131,60 @@ text2speechRoutes(app);
 //     }
 // };
 
+=======
+// const session = new RealtimeSession({ apiKey: API_KEY });
+// const PATH_TO_FILE = 'audio/output.mp3';
+>>>>>>> 19575ac481cd9048ea7d6e3fc22995ef1e2cb3fe
 
+// session.addListener('Error', (error:any) => {
+//   console.log('session error', error);
+// });
+
+// session.addListener('AddTranscript', (message:any) => {
+// //   process.stdout.write(message);
+
+// console.log(message)
+// });
+
+// session.addListener('EndOfTranscript', () => {
+//   process.stdout.write('\n');
+// });
+
+// session
+//   .start({
+//     transcription_config: {
+//       language: 'en',
+//       operating_point: 'enhanced',
+//       enable_partials: true,
+//       max_delay: 2,
+//     },
+//     audio_format: { type: 'file' },
+//   })
+//   .then(() => {
+//     //prepare file stream
+//     const fileStream = fs.createReadStream(PATH_TO_FILE);
+
+//     //send it
+//     fileStream.on('data', (sample:any) => {
+//       session.sendAudio(sample);
+//     });
+
+//     //end the session
+//     fileStream.on('end', () => {
+//       session.stop();
+//     });
+
+//   })
+//   .catch((error:any) => {
+//     console.log('error', error.message);
+//   });
+
+app.get('/ping', async(req,res) => {
+   res.send({message:"pong"})
+})
 app.listen(port, () => {
+ 
+
+
   console.log(`Server is listening on port ${port}`);
 });
