@@ -14,14 +14,9 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
     "@types/node": "~20",
-<<<<<<< HEAD
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "~6.15",
     "@typescript-eslint/parser": "~6.15",
-=======
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
->>>>>>> 19575ac481cd9048ea7d6e3fc22995ef1e2cb3fe
     "eslint": "~8.56",
     "eslint-config-prettier": "~9.1",
     "eslint-plugin-jest": "~27.6",
@@ -57,12 +52,8 @@
     "dotenv": "^16.4.5",
     "elevenlabs-node": "^2.0.3",
     "express": "^4.18.2",
-<<<<<<< HEAD
     "express-fileupload": "^1.4.3",
     "gm": "^1.25.0",
-=======
-    "fluent-ffmpeg": "^2.1.2",
->>>>>>> 19575ac481cd9048ea7d6e3fc22995ef1e2cb3fe
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.0",
     "multer": "^1.4.5-lts.1",
@@ -70,16 +61,10 @@
     "pdf2pic": "^3.1.1",
     "pdftopic": "^1.0.4-alpha",
     "speaker": "^0.5.4",
-<<<<<<< HEAD
+    "speechmatics": "^3.1.7",
     "tesseract.js": "^5.0.5",
     "tslib": "~2.6",
     "ws": "^8.16.0"
-=======
-    "speechmatics": "^3.1.7",
-    "tslib": "~2.6",
-    "vosk": "^0.3.39",
-    "vosk-wasm": "^0.0.1"
->>>>>>> 19575ac481cd9048ea7d6e3fc22995ef1e2cb3fe
   },
   "volta": {
     "node": "20.10.0"

@@ -30,56 +30,56 @@ text2speechRoutes(app);
 BooksRoutes(app);
 
 //@ts-ignoreconst fs = require('fs');
-import fs from 'fs'
-const { RealtimeSession } = require('speechmatics');
+// import fs from 'fs'
+// const { RealtimeSession } = require('speechmatics');
 
-const API_KEY = 'tBLz13Pahs4QpAMfc9TFPr9nVMmkNP9z';
+// const API_KEY = 'tBLz13Pahs4QpAMfc9TFPr9nVMmkNP9z';
 
-const session = new RealtimeSession({ apiKey: API_KEY });
-const PATH_TO_FILE = 'audio2.mp3';
+// const session = new RealtimeSession({ apiKey: API_KEY });
+// const PATH_TO_FILE = 'audio2.mp3';
 
-session.addListener('Error', (error:any) => {
-  console.log('session error', error);
-});
+// session.addListener('Error', (error:any) => {
+//   console.log('session error', error);
+// });
 
-session.addListener('AddTranscript', (message:any) => {
-//   process.stdout.write(message);
+// session.addListener('AddTranscript', (message:any) => {
+// //   process.stdout.write(message);
 
-console.log(message)
-});
+// console.log(message)
+// });
 
-session.addListener('EndOfTranscript', () => {
-  process.stdout.write('\n');
-});
+// session.addListener('EndOfTranscript', () => {
+//   process.stdout.write('\n');
+// });
 
-session
-  .start({
-    transcription_config: {
-      language: 'en',
-      operating_point: 'enhanced',
-      enable_partials: true,
-      max_delay: 2,
-    },
-    audio_format: { type: 'file' },
-  })
-  .then(() => {
-    //prepare file stream
-    const fileStream = fs.createReadStream(PATH_TO_FILE);
+// session
+//   .start({
+//     transcription_config: {
+//       language: 'en',
+//       operating_point: 'enhanced',
+//       enable_partials: true,
+//       max_delay: 2,
+//     },
+//     audio_format: { type: 'file' },
+//   })
+//   .then(() => {
+//     //prepare file stream
+//     const fileStream = fs.createReadStream(PATH_TO_FILE);
 
-    //send it
-    fileStream.on('data', (sample:any) => {
-      session.sendAudio(sample);
-    });
+//     //send it
+//     fileStream.on('data', (sample:any) => {
+//       session.sendAudio(sample);
+//     });
 
-    //end the session
-    fileStream.on('end', () => {
-      session.stop();
-    });
+//     //end the session
+//     fileStream.on('end', () => {
+//       session.stop();
+//     });
 
-  })
-  .catch((error:any) => {
-    console.log('error', error.message);
-  });
+//   })
+//   .catch((error:any) => {
+//     console.log('error', error.message);
+//   });
 
 app.get('/ping', async(req,res) => {
    res.send({message:"pong"})
