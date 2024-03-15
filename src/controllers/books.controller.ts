@@ -41,7 +41,7 @@ export async function createBook(req:Request, res:Response) {
     // The img to text
     const worker = await createWorker('eng');
     const ret = await worker.recognize(uploadedImagesUrls[0]);
-    let text_2_audio = ret.data.text;
+    //let text_2_audio = ret.data.text;
 
     await worker.terminate();
    console.log(ret.data.text)
@@ -85,8 +85,8 @@ voice.textToSpeech({
     modelId:         "eleven_monolingual_v1",       // The ElevenLabs Model ID
     style:           1,                              // The style exaggeration for the converted speech
     speakerBoost:    true                            // The speaker boost for the converted speech
-  }).then((res:any) => {
-    // console.log(res);
+  }).then(() => {
+    //  console.log(res);
 });// Send the audio stream directly to the client
     }
 
