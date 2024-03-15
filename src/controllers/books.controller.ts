@@ -151,6 +151,15 @@ session
 }
 
 
+export async function getAllBook(req: Request, res: Response) {
+
+  console.log("hello")
+  const data = req.body;
+  const book = await Books.find(data);
+
+  res.send(book)
+
+}
 
 export async function getSingleBook(req: Request, res: Response) {
 
