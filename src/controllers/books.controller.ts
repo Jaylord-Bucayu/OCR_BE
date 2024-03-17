@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import Books from '../models/book';
 
-import {uploadImagesToCloudinary} from '../utils/index'
+import {uploadImagesToCloudinary, generateRandomFileName} from '../utils/index'
 const ElevenLabs = require("elevenlabs-node");
 //import { PassThrough } from 'stream';
 import fs from 'fs';
@@ -21,6 +21,8 @@ export async function createBook(req:Request, res:Response) {
 
     // Create a new book instance with data from the request body
     const data = req.body;
+
+    const audio_file_name = generateRandomFileName(10)
     const book = new Books(data);
 
     //@ts-ignore
@@ -34,9 +36,8 @@ export async function createBook(req:Request, res:Response) {
 
     // Append the uploaded image URLs to the existing photos array
     book.photos.push(...uploadedImagesUrls);
-
-    // Save the book to the database
-    await book.save();
+    book.audio = `http://localhost:5000/audio/${audio_file_name}.mp3`;
+    
 
     // The img to text
     const worker = await createWorker('eng');
@@ -45,6 +46,12 @@ export async function createBook(req:Request, res:Response) {
 
     await worker.terminate();
    console.log(ret.data.text)
+
+   book.text = ret.data.text;
+
+   // Save the book to the database
+   await book.save();
+
     if (ret.data.text) {
       // const url = "https://api.elevenlabs.io/v1/text-to-speech/frA4oJkLjNTYC72eQys1";
       // const headers = {
@@ -69,24 +76,24 @@ export async function createBook(req:Request, res:Response) {
 
 const voice = new ElevenLabs(
     {
-        apiKey:  "0efaa9cc11c9a36d670be87e5e3d6ddf", // Your API key from Elevenlabs
-        voiceId: "XzKPoXLAoEQgUewWR7LL",             // A Voice ID from Elevenlabs
+        apiKey:  "d618ae405f2a06faef50c2beefb1971c", // Your API key from Elevenlabs
+        voiceId: "frA4oJkLjNTYC72eQys1",             // A Voice ID from Elevenlabs
     }
 );
 
 voice.textToSpeech({
     // Required Parameters
-    fileName:        "audio2.mp3",                    // The name of your audio file
+    fileName:        `${audio_file_name}.mp3`,                    // The name of your audio file
     textInput:       ret.data.text,                // The text you wish to convert to speech
     // Optional Parameters
-    voiceId:         "XzKPoXLAoEQgUewWR7LL",         // A different Voice ID from the default
+    voiceId:         "frA4oJkLjNTYC72eQys1",         // A different Voice ID from the default
     stability:       0.5,                            // The stability for the converted speech
     similarityBoost: 0.5,                            // The similarity boost for the converted speech
     modelId:         "eleven_monolingual_v1",       // The ElevenLabs Model ID
     style:           1,                              // The style exaggeration for the converted speech
     speakerBoost:    true                            // The speaker boost for the converted speech
-  }).then(() => {
-    //  console.log(res);
+  }).then((res:any) => {
+     console.log({res});
 });// Send the audio stream directly to the client
     }
 
@@ -96,7 +103,7 @@ voice.textToSpeech({
 const API_KEY = 'tBLz13Pahs4QpAMfc9TFPr9nVMmkNP9z';
 
 const session = new RealtimeSession({ apiKey: API_KEY });
-const PATH_TO_FILE = '../audio2.mp3';
+const PATH_TO_FILE = `../${audio_file_name}.mp3`;
 
 session.addListener('Error', (error:any) => {
   console.log('session error', error);
@@ -104,6 +111,9 @@ session.addListener('Error', (error:any) => {
 
 session.addListener('AddTranscript', (message:any) => {
 //   process.stdout.write(message);
+
+book.timestamp = message;
+
 
 console.log(message)
 });
@@ -142,6 +152,7 @@ session
   });
 
 
+  await book.save();
     // Send the book object as a response after all asynchronous operations have completed
     res.json(book);
   } catch (error) {

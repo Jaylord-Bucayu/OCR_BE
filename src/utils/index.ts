@@ -56,6 +56,16 @@ export function generateStudentId(): string {
     // Convert the random number to a string and return it as the student ID
     return randomId.toString();
   }
+
+
+  export function generateRandomFileName(length:number) {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomFileName = "";
+    for (let i = 0; i < length; i++) {
+      randomFileName += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return randomFileName;
+  }
   
 
 

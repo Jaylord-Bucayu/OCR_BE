@@ -24,7 +24,7 @@ const bookSchema: Schema<I> = new Schema<I>(
      
     },
     timestamp:{
-      type:Object,
+      type:[Object],
 
     },
     text:{
