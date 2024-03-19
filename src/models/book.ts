@@ -7,7 +7,7 @@ interface I extends Document {
   photos?: string | null;
   timestamp?:  Map<string, string | number | boolean | null>;
   text?: string | null;
-  audio?: string | null;
+  audio?: Map<string, string | number | boolean | null>;
   
 }
 
@@ -35,7 +35,7 @@ const bookSchema: Schema<I> = new Schema<I>(
       type:String
     },
     audio:{
-      type:String
+      type:[String]
     }
 
 
