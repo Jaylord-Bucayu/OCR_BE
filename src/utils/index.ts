@@ -37,8 +37,6 @@ export const uploadImagesToCloudinary = async (files: any) => {
       const result = await cloudinary.uploader.upload(`data:${file.mimetype};base64,${base64String}`,options);
       uploadedImagesUrls.push(result.secure_url);
     }
-
-    console.log({uploadedImagesUrls})
     return uploadedImagesUrls;
   } catch (error) {
     console.error('Error uploading images to Cloudinary:', error);

@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface I extends Document {
   title?: string | null;
+  page?:Map<string, string | number | boolean | null>;
   description?: string | null;
   photos?: string | null;
   timestamp?:  Map<string, string | number | boolean | null>;
@@ -15,7 +16,10 @@ const bookSchema: Schema<I> = new Schema<I>(
     title: {
         type: String,
     },
-
+    page:{
+      type:[String],
+     
+    },
     description: {
         type: String,  
     },

@@ -4,7 +4,8 @@ import {
     createBook,
     getAllBook,
     getSingleBook,
-    updateSingleBook
+    updateSingleBook,
+    userSubscription
 } from "../controllers/books.controller";
 
 export function BooksRoutes(app: Application) {
@@ -29,5 +30,7 @@ export function BooksRoutes(app: Application) {
 
     app.patch("/book/:id",
     updateSingleBook)
+
+    app.get("/book/subscription",userSubscription)
     
 }
