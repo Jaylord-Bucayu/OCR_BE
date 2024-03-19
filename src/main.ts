@@ -3,7 +3,7 @@ import express  from "express";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
-import path from 'path';
+// import path from 'path';
 
 import { authRoutes } from "./routes/auth.routes"
 import { UsersRoute } from "./routes/user.routes";
