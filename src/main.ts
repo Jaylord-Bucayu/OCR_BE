@@ -3,6 +3,7 @@ import express  from "express";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
+import path from 'path';
 
 import { authRoutes } from "./routes/auth.routes"
 import { UsersRoute } from "./routes/user.routes";
@@ -21,8 +22,15 @@ app.use(fileUpload())
 
 
 // Set up a route to serve audio files
-app.use('/audio', express.static('audio'));
+app.use('/audio', express.static('dist/audio'));
+// app.use(express.static('dist'))
+// app.use(express.static('public'))
 
+
+// app.use(express.static(path.join(__dirname, 'dist')));
+
+// // Serve audio files from the 'dist/audio' directory
+// app.use('/audio', express.static(path.join(__dirname, 'dist', 'audio')));
 initializeMongoose();
 authRoutes(app);
 UsersRoute(app);

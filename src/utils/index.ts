@@ -17,6 +17,28 @@ const upload = multer({ storage: storage });
 
 export const multerUpload = upload.array('images'); // Middleware for handling file uploads
 
+
+export async function uploadAudioToCloudinary(files: any): Promise<string[]> {
+  const audioUrls: string[] = [];
+
+  // Check if there are audio files
+  if (!files.audio) {
+    return audioUrls;
+  }
+
+  const audioFile = files.audio;
+
+  // Upload audio files to Cloudinary
+  for (let i = 0; i < audioFile.length; i++) {
+    const result = await cloudinary.uploader.upload(audioFile[i].tempFilePath, {
+      resource_type: 'video',
+      folder: 'audio' // Optional: Save audio files in a specific folder in Cloudinary
+    });
+    audioUrls.push(result.secure_url);
+  }
+
+  return audioUrls;
+}
 // Function to handle file uploads to Cloudinary
 export const uploadImagesToCloudinary = async (files: any) => {
 

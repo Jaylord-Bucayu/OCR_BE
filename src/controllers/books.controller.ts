@@ -8,7 +8,7 @@ import { AssemblyAI } from 'assemblyai'
 import {uploadImagesToCloudinary, generateRandomFileName} from '../utils/index'
 const ElevenLabs = require("elevenlabs-node");
 //import { PassThrough } from 'stream';
-import fs from 'fs';
+import * as fs from 'fs-extra';
 import axios from 'axios';
 import path from 'path'
 import { createWorker } from 'tesseract.js';
@@ -61,6 +61,11 @@ export async function createBook(req:Request, res:Response) {
       book.page.push(ret.data.text);
       await worker.terminate();
 
+      const audioFolderPath = 'dist/audio';
+      await fs.ensureDir(audioFolderPath);
+
+      const audioFilePath = path.join(audioFolderPath, `${audio_file_name}.mp3`);
+
     book.audio.push(`${process.env.APP_URL}/audio/${audio_file_name}.mp3`);
     // Save the book to the database
     await book.save();
@@ -86,8 +91,11 @@ export async function createBook(req:Request, res:Response) {
    responseType: 'stream'
  })
  .then(response => {
-   response.data.pipe(fs.createWriteStream(path.join('audio',`${audio_file_name}.mp3`)));
- 
+
+  response.data.pipe(fs.createWriteStream(audioFilePath));
+ // response.data.pipe(fs.createWriteStream(path.join('dist', 'audio', `${audio_file_name}.mp3`)));
+   //response.data.pipe(fs.createWriteStream(path.join('audio',`${audio_file_name}.mp3`)));
+ //UPLOAD TO CLOUDINARY
  
    console.log('Audio saved as output.mp3');
  })
@@ -136,6 +144,8 @@ const config = {
     res.status(500).json({ error: 'An error occurred while creating the book' });
   }
 }
+
+
 
 
 export async function getAllBook(req: Request, res: Response) {
