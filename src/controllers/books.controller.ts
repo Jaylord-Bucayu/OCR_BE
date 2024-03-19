@@ -101,7 +101,7 @@ const client = new AssemblyAI({
   apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
 })
 
-const audioUrl = book.audio[x];
+let audioUrl = book.audio[x];
   
 
 const config = {
@@ -126,7 +126,7 @@ const config = {
     }
 
  
-  
+    await book.save();
     // Send the book object as a response after all asynchronous operations have completed
     res.send(book);
   
