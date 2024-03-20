@@ -74,7 +74,7 @@ export async function createBook(req: Request, res: Response) {
       responseType: 'stream'
     });
 
-    console.log({response})
+    console.log(response.data,response.request)
 
     const audioData = await new Promise<Buffer>((resolve, reject) => {
       const chunks: Buffer[] = [];
