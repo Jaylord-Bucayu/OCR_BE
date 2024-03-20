@@ -15,6 +15,7 @@ import axios from 'axios';
 import { createWorker } from 'tesseract.js';
 
 
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -37,21 +38,12 @@ export async function createBook(req: Request, res: Response) {
     const data = req.body;
     const book = new Books(data);
 
-
     if (!Array.isArray(book.photos) || !Array.isArray(book.page)) {
       throw new Error('book.photos is not an array');
     }
 
-    // Ensure book.photos is initialized as an array if it's not already
-    // book.photos = (book.photos || []);
-
-
     // Append the uploaded image URLs to the existing photos array
     book.photos.push(...uploadedImagesUrls);
-
-  
-
-    console.log(uploadedImagesUrls.length);
 
     for (let x = 0; x < uploadedImagesUrls.length; x++) {
       // The img to text
@@ -59,11 +51,12 @@ export async function createBook(req: Request, res: Response) {
       const ret = await worker.recognize(uploadedImagesUrls[x]);
       book.page.push(ret.data.text);
       await worker.terminate();
-
+      
+      console.log("INDEX: " + x)
       const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
       const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
       const textToSpeak = ret.data.text;
-
+    
       try {
         const response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
           text: textToSpeak,
@@ -80,63 +73,80 @@ export async function createBook(req: Request, res: Response) {
           },
           responseType: 'stream'
         });
-
+    
         const audioData = await new Promise<Buffer>((resolve, reject) => {
           const chunks: Buffer[] = [];
-          response.data.on('data', (chunk:any) => chunks.push(chunk));
+          response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
           response.data.on('end', () => resolve(Buffer.concat(chunks)));
-          response.data.on('error', (error:any) => reject(error));
+          response.data.on('error', (error: any) => reject(error));
         });
-
+    
         // Upload audio data to Cloudinary
-        await cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error:any, result:any) => {
-          if (error) {
-            console.error('Error uploading audio to Cloudinary:', error);
-            return;
-          }
-          // Once uploaded successfully, you can access the URL in result.secure_url
-          console.log('Audio uploaded to Cloudinary:', result.secure_url);
-          // Here, you can save the Cloudinary URL to your database or any other necessary action
-         
-          if (!Array.isArray(book.audio)) {
-            throw new Error('book.page is not an array');
-          }
+        const result = await new Promise<any>((resolve, reject) => {
+          cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
+            if (error) {
+              console.error('Error uploading audio to Cloudinary:', error);
+              reject(error);
+              return;
+            }
+            console.log('Audio uploaded to Cloudinary:', result.secure_url);
+            resolve(result);
+          }).end(audioData);
+        });
+    
+        if (!Array.isArray(book.audio)) {
+          book.audio = [];
+        }
+        book.audio.push(result.secure_url);
+      
+        // Save the book instance after uploading audio to Cloudinary
+        await book.save();
+    
+        const client = new AssemblyAI({
+          apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
+        });
+    
+        const audioUrl = result.secure_url;
+        const config = {
+          audio_url: audioUrl
+        };
+    
+        const transcript = await client.transcripts.create(config);
+    
+        if (!book.timestamp || !Array.isArray(book.timestamp)) {
+          book.timestamp = [];
+        }
 
-          // For example:
-          book.audio.push(result.secure_url);
-          // Save the book to the database
-          
+   
 
-          const client = new AssemblyAI({
-            apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
-          });
-
-          const audioUrl = result.secure_url; // Access the Cloudinary URL here
-
-          const config = {
-            audio_url: audioUrl
-          };
-
-          const transcript = await client.transcripts.create(config);
-          console.log("words "+transcript.words);
-
-          if (!Array.isArray(book.timestamp)) {
-            throw new Error('book.page is not an array');
-          }
-
+           
+        if (!Array.isArray(book.timestamp)) {
+          book.timestamp = [];
+        }
+        
+        
+        if (transcript.words) {
+          console.log("PUSHED");
+          // Push transcript.words directly into the timestamp array
           book.timestamp.push(transcript.words);
 
-          await book.save();
 
-          // After all asynchronous operations are done, send the book object as a response
-         
-        }).end(audioData);
+        }
+      
+        // Save the book instance again with the updated timestamp
+        await book.save();
+    
       } catch (error) {
         console.error('Error processing audio:', error);
       }
     }
+    
+    
+//end for
     await book.save();
-    res.send(book)
+    // Send the book object as a response after all asynchronous operations have completed
+    res.send(book);
+
   } catch (error) {
     console.error('Error creating book:', error);
     res.status(500).json({ error: 'An error occurred while creating the book' });

@@ -1,13 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+
+
 interface I extends Document {
   title?: string | null;
   page?:Map<string, string | number | boolean | null>;
   description?: string | null;
   photos?: string | null;
-  timestamp?:  Map<string, string | number | boolean | null>;
+  timestamp?: any;
   text?: string | null;
-  audio?: Map<string, string | number | boolean | null>;
+  audio?: string[];
   
 }
 
@@ -28,8 +30,8 @@ const bookSchema: Schema<I> = new Schema<I>(
      
     },
     timestamp:{
-      type:[Object],
-
+      type: [[Object]],
+     
     },
     text:{
       type:String
