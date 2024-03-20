@@ -57,8 +57,9 @@ export async function createBook(req: Request, res: Response) {
       const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
       const textToSpeak = ret.data.text;
     
+      let response: any;
       try {
-        const response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+         response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
           text: textToSpeak,
           model_id: "eleven_monolingual_v1",
           voice_settings: {
@@ -72,6 +73,8 @@ export async function createBook(req: Request, res: Response) {
             'xi-api-key': XI_API_KEY,
           },
           responseType: 'stream'
+        }).catch(function (error) {
+          console.log(error.toJSON());
         });
     
         const audioData = await new Promise<Buffer>((resolve, reject) => {
