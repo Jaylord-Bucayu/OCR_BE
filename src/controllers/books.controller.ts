@@ -74,6 +74,7 @@ export async function createBook(req: Request, res: Response) {
           },
           responseType: 'stream'
         }).catch(function (error) {
+          console.error('Error during HTTP request:', error);
           console.log(error.toJSON());
         });
     console.log(response)
