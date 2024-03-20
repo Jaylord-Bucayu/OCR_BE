@@ -46,13 +46,13 @@ export async function createBook(req: Request, res: Response) {
     book.photos.push(...uploadedImagesUrls);
 
     for (let x = 0; x < uploadedImagesUrls.length; x++) {
-      // The img to text
       const worker = await createWorker('eng');
       const ret = await worker.recognize(uploadedImagesUrls[x]);
       book.page.push(ret.data.text);
       await worker.terminate();
-      
-      console.log("INDEX: " + x)
+    
+      console.log("INDEX: " + x);
+    
       const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
       const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
       const textToSpeak = ret.data.text;
@@ -72,8 +72,6 @@ export async function createBook(req: Request, res: Response) {
             'xi-api-key': XI_API_KEY,
           },
           responseType: 'stream'
-        }).catch(function (error) {
-          console.log(error.toJSON());
         });
     
         const audioData = await new Promise<Buffer>((resolve, reject) => {
@@ -83,7 +81,6 @@ export async function createBook(req: Request, res: Response) {
           response.data.on('error', (error: any) => reject(error));
         });
     
-        // Upload audio data to Cloudinary
         const result = await new Promise<any>((resolve, reject) => {
           cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
             if (error) {
@@ -100,8 +97,7 @@ export async function createBook(req: Request, res: Response) {
           book.audio = [];
         }
         book.audio.push(result.secure_url);
-      
-        // Save the book instance after uploading audio to Cloudinary
+    
         await book.save();
     
         const client = new AssemblyAI({
@@ -115,33 +111,22 @@ export async function createBook(req: Request, res: Response) {
     
         const transcript = await client.transcripts.create(config);
     
-        if (!book.timestamp || !Array.isArray(book.timestamp)) {
+        if (!book.timestamp) {
           book.timestamp = [];
         }
-
-   
-
-           
-        if (!Array.isArray(book.timestamp)) {
-          book.timestamp = [];
-        }
-        
-        
+    
         if (transcript.words) {
           console.log("PUSHED");
-          // Push transcript.words directly into the timestamp array
           book.timestamp.push(transcript.words);
-
-
         }
-      
-        // Save the book instance again with the updated timestamp
+    
         await book.save();
     
       } catch (error) {
         console.error('Error processing audio:', error);
       }
     }
+    
     
     
 //end for
