@@ -76,7 +76,7 @@ export async function createBook(req: Request, res: Response) {
         }).catch(function (error) {
           console.log(error.toJSON());
         });
-    console.log(data)
+    console.log(response)
         if (!response || !response.data) {
           throw new Error('Invalid response received');
         }
