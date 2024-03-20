@@ -57,8 +57,10 @@ export async function createBook(req: Request, res: Response) {
   const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
   const textToSpeak = ret.data.text;
 
-  try {
-    const response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+ let response: any;
+  
+ try {
+     response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
       text: textToSpeak,
       model_id: "eleven_monolingual_v1",
       voice_settings: {
@@ -72,9 +74,16 @@ export async function createBook(req: Request, res: Response) {
         'xi-api-key': XI_API_KEY,
       },
       responseType: 'stream'
+    }).then(function (response) {
+      console.log({response});
+
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
     });
 
-    console.log('ANKUR' + response.data,response.request)
+  
 
     const audioData = await new Promise<Buffer>((resolve, reject) => {
       const chunks: Buffer[] = [];
@@ -111,7 +120,7 @@ export async function createBook(req: Request, res: Response) {
       audio_url: audioUrl
     };
 
-    const transcript = await client.transcripts.create(config);
+    const transcript = await client.transcripts.transcribe(config);
 
     if (!book.timestamp) {
       book.timestamp = [];
