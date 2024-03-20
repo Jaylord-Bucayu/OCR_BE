@@ -72,6 +72,8 @@ export async function createBook(req: Request, res: Response) {
             'xi-api-key': XI_API_KEY,
           },
           responseType: 'stream'
+        }).catch(function (error) {
+          console.log(error.toJSON());
         });
     
         const audioData = await new Promise<Buffer>((resolve, reject) => {
