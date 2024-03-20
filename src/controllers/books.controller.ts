@@ -76,11 +76,11 @@ export async function createBook(req: Request, res: Response) {
         }).catch(function (error) {
           console.log(error.toJSON());
         });
-    
+    console.log(data)
         if (!response || !response.data) {
           throw new Error('Invalid response received');
         }
-        
+
         const audioData = await new Promise<Buffer>((resolve, reject) => {
           const chunks: Buffer[] = [];
           response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
