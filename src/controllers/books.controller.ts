@@ -45,96 +45,90 @@ export async function createBook(req: Request, res: Response) {
     // Append the uploaded image URLs to the existing photos array
     book.photos.push(...uploadedImagesUrls);
 
-    for (let x = 0; x < uploadedImagesUrls.length; x++) {
-      const worker = await createWorker('eng');
-      const ret = await worker.recognize(uploadedImagesUrls[x]);
-      book.page.push(ret.data.text);
-      await worker.terminate();
-    
-      console.log("INDEX: " + x);
-    
-      const XI_API_KEY = '0d785eb82a3798cc1a3565bc88691c2d' || process.env.ELEVEN_LABS_KEY;
-      const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
-      const textToSpeak = ret.data.text;
-    
-      let response: any;
-      try {
-         response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-          text: textToSpeak,
-          model_id: "eleven_monolingual_v1",
-          voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.5
-          }
-        }, {
-          headers: {
-            'Accept': 'audio/mpeg',
-            'Content-Type': 'application/json',
-            'xi-api-key': XI_API_KEY,
-          },
-          responseType: 'stream'
-        }).catch(function (error) {
-          console.error('Error during HTTP request:', error);
-          console.log(error.toJSON());
-        });
-    console.log(response)
-        if (!response || !response.data) {
-          throw new Error('Invalid response received');
-        }
+  for (let x = 0; x < uploadedImagesUrls.length; x++) {
+  const worker = await createWorker('eng');
+  const ret = await worker.recognize(uploadedImagesUrls[x]);
+  book.page.push(ret.data.text);
+  await worker.terminate();
 
-        const audioData = await new Promise<Buffer>((resolve, reject) => {
-          const chunks: Buffer[] = [];
-          response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
-          response.data.on('end', () => resolve(Buffer.concat(chunks)));
-          response.data.on('error', (error: any) => reject(error));
-        });
-    
-        const result = await new Promise<any>((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
-            if (error) {
-              console.error('Error uploading audio to Cloudinary:', error);
-              reject(error);
-              return;
-            }
-            console.log('Audio uploaded to Cloudinary:', result.secure_url);
-            resolve(result);
-          }).end(audioData);
-        });
-    
-        if (!Array.isArray(book.audio)) {
-          book.audio = [];
-        }
-        book.audio.push(result.secure_url);
-    
-        await book.save();
-    
-        const client = new AssemblyAI({
-          apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
-        });
-    
-        const audioUrl = result.secure_url;
-        const config = {
-          audio_url: audioUrl
-        };
-    
-        const transcript = await client.transcripts.create(config);
-    
-        if (!book.timestamp) {
-          book.timestamp = [];
-        }
-    
-        if (transcript.words) {
-          console.log("PUSHED");
-          book.timestamp.push(transcript.words);
-        }
-    
-        await book.save();
-    
-      } catch (error) {
-        console.error('Error processing audio:', error);
+  console.log("INDEX: " + x);
+
+  const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
+  const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
+  const textToSpeak = ret.data.text;
+
+  try {
+    const response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+      text: textToSpeak,
+      model_id: "eleven_monolingual_v1",
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.5
       }
+    }, {
+      headers: {
+        'Accept': 'audio/mpeg',
+        'Content-Type': 'application/json',
+        'xi-api-key': XI_API_KEY,
+      },
+      responseType: 'stream'
+    });
+
+    console.log({response})
+
+    const audioData = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
+      response.data.on('end', () => resolve(Buffer.concat(chunks)));
+      response.data.on('error', (error: any) => reject(error));
+    });
+
+    const result = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
+        if (error) {
+          console.error('Error uploading audio to Cloudinary:', error);
+          reject(error);
+          return;
+        }
+        console.log('Audio uploaded to Cloudinary:', result.secure_url);
+        resolve(result);
+      }).end(audioData);
+    });
+
+    if (!Array.isArray(book.audio)) {
+      book.audio = [];
     }
-    
+    book.audio.push(result.secure_url);
+
+    await book.save();
+
+    const client = new AssemblyAI({
+      apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
+    });
+
+    const audioUrl = result.secure_url;
+    const config = {
+      audio_url: audioUrl
+    };
+
+    const transcript = await client.transcripts.create(config);
+
+    if (!book.timestamp) {
+      book.timestamp = [];
+    }
+
+    if (transcript.words) {
+      console.log("PUSHED");
+      book.timestamp.push(transcript.words);
+    }
+
+    await book.save();
+
+  } catch (error) {
+    console.error('Error processing audio:', error);
+  }
+}
+
     
     
 //end for
