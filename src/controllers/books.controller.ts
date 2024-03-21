@@ -165,10 +165,19 @@ export async function getAllBook(req: Request, res: Response) {
 
 export async function getSingleBook(req: Request, res: Response) {
 
+  try {
     const params = req.params;
     const book = await Books.findById(params.id);
 
-    res.send(book)
+    if (!book) {
+        return res.status(404).send({ error: 'No book found with the provided ID' });
+    }
+
+    res.send(book);
+} catch (error) {
+    // console.error('Error fetching book:', error);
+    res.status(500).send({ error: 'No book found with the provided ID' });
+}
 
 }
 
