@@ -15,6 +15,7 @@ import 'dotenv/config';
 
 const app = express();
 const port = 5000;
+
 // Enable CORS
 app.use(cors());
 app.use(bodyParser.json());
