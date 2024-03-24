@@ -94,9 +94,6 @@ BooksRoutes(app);
 import axios from 'axios';
 app.get('/ping', async(_: Request,res:Response) => {
      
-  const response = await axios.get('https://ocr-be-9j6a.onrender.com/book');
-
-  console.log(response.data)
 
     res.send({message:'PING'})
 })
