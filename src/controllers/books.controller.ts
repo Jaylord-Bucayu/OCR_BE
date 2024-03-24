@@ -15,7 +15,6 @@ import axios from 'axios';
 import { createWorker } from 'tesseract.js';
 
 
-
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -217,4 +216,33 @@ voice.getUserSubscription().then((res:any) => {
   res.send(error)
 }
 
+}
+
+
+export async function getSingleBookPage(req: Request, res: Response) {
+  const params = req.params;
+  const query = req.query;
+
+  const page = await Books.findById(params.id);
+
+  if (!page) {
+      return res.status(404).send('Page not found');
+  }
+
+  // Ensure that query.page is a number or default to 0
+  const audioIndex = typeof query.page === 'number' ? query.page : 0;
+
+  const pageData = page.page instanceof Map ? page.page.get(String(audioIndex)) : undefined;
+
+  const single_page = {
+      timestamp: page.timestamp?.[audioIndex],
+      title: page.title,
+      description: page.description,
+      photos: page.photos?.[audioIndex],
+      audio: page.audio?.[audioIndex],
+      page:pageData,
+      pageNo:audioIndex + 1
+  };
+
+  res.send(single_page);
 }
