@@ -1,5 +1,6 @@
 
 import express  from "express";
+import { Request, Response } from "express";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
@@ -16,7 +17,7 @@ import 'dotenv/config';
 const app = express();
 const port = 5000;
 
-// Enable CORS
+  // Enable CORS
 app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload())
@@ -90,8 +91,14 @@ BooksRoutes(app);
 //     console.log('error', error.message);
 //   });
 
-app.get('/ping', async(req,res) => {
-   res.send({message:"pong"})
+import axios from 'axios';
+app.get('/ping', async(_: Request,res:Response) => {
+     
+  const response = await axios.get('https://ocr-be-9j6a.onrender.com/book');
+
+  console.log(response.data)
+
+    res.send({message:'PING'})
 })
 app.listen(port, () => {
  
