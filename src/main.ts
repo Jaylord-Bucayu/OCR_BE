@@ -94,7 +94,7 @@ BooksRoutes(app);
 import axios from 'axios';
 app.get('/ping', async(_: Request,res:Response) => {
      
-
+ let response:any;
 
   const requestOptions = {
     method: 'POST',
@@ -109,7 +109,7 @@ app.get('/ping', async(_: Request,res:Response) => {
   };
   
   // Make the request using Axios
-  axios(requestOptions)
+   response = axios(requestOptions)
     .then(response => {
       // Handle success
       console.log('Success:', response.data);
@@ -120,7 +120,7 @@ app.get('/ping', async(_: Request,res:Response) => {
     });
 
 
-    res.send({message:'PING'})
+    res.send(response.data)
 })
 app.listen(port, () => {
  
