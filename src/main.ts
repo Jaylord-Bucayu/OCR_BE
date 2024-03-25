@@ -119,7 +119,7 @@ app.get('/ping', async (_: Request, res: Response) => {
       res.json(responseData);
   } catch (error) {
       console.error('Error:', error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(error);
   }
 });
 app.listen(port, () => {
