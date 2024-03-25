@@ -95,6 +95,31 @@ import axios from 'axios';
 app.get('/ping', async(_: Request,res:Response) => {
      
 
+
+  const requestOptions = {
+    method: 'POST',
+    url: 'https://api.elevenlabs.io/v1/text-to-speech/YpgvQzWEjnAimoQc8qtUG', // Ensure to replace YOUR_VOICE_ID with the actual voice ID
+    headers: {
+      'Content-Type': 'application/json',
+      'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c', // This header authenticates your request
+    },
+    data: {
+      text: 'Your text here', // Replace with the text you want to convert to speech
+    },
+  };
+  
+  // Make the request using Axios
+  axios(requestOptions)
+    .then(response => {
+      // Handle success
+      console.log('Success:', response.data);
+    })
+    .catch(error => {
+      // Handle error
+      console.error('Error:', error);
+    });
+
+
     res.send({message:'PING'})
 })
 app.listen(port, () => {
