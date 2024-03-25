@@ -102,6 +102,7 @@ app.get('/ping', async (_: Request, res: Response) => {
           headers: {
               'Content-Type': 'application/json',
               'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
+              'Authorization': 'Bearer rnd_B7E8r486oi9m9LfBStGK5eyrkG3K'
           },
           data: {
               text: 'Your text here',
