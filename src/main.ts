@@ -92,37 +92,36 @@ BooksRoutes(app);
 //   });
 
 import axios from 'axios';
-app.get('/ping', async(_: Request,res:Response) => {
-     
-  console.log("PINGG")
- let response:any;
+app.get('/ping', async (_: Request, res: Response) => {
+  console.log("PINGG");
 
-  const requestOptions = {
-    method: 'POST',
-    url: 'https://api.elevenlabs.io/v1/text-to-speech/YpgvQzWEjnAimoQc8qtUG', // Ensure to replace YOUR_VOICE_ID with the actual voice ID
-    headers: {
-      'Content-Type': 'application/json',
-      'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c', // This header authenticates your request
-    },
-    data: {
-      text: 'Your text here', // Replace with the text you want to convert to speech
-    },
-  };
-  
-  // Make the request using Axios
-   response = axios(requestOptions)
-    .then(response => {
-      // Handle success
-      console.log('Success:', response.data);
-    })
-    .catch(error => {
-      // Handle error
+  try {
+      const requestOptions = {
+          method: 'POST',
+          url: 'https://api.elevenlabs.io/v1/text-to-speech/pgvQzWEjnAimoQc8qtUG',
+          headers: {
+              'Content-Type': 'application/json',
+              'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
+          },
+          data: {
+              text: 'Your text here',
+          },
+      };
+
+      const response = await axios(requestOptions);
+      
+      // Extract only the necessary data from the response
+      const responseData = {
+          status: response.status,
+          data: response.data
+      };
+
+      res.json(responseData);
+  } catch (error) {
       console.error('Error:', error);
-    });
-
-
-    res.send(response.data)
-})
+      res.status(500).send('Internal Server Error');
+  }
+});
 app.listen(port, () => {
  
 
