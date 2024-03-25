@@ -53,7 +53,7 @@ export async function createBook(req: Request, res: Response) {
   console.log("INDEX: " + x);
 
   const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
-  const VOICE_ID = 'kxxDJmlV0nGw5ttpzZqr';
+  const VOICE_ID = process.env.ELEVEN_LABS_VOICE_ID;
   const textToSpeak = ret.data.text;
 
  let response: any;
