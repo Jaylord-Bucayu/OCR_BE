@@ -102,30 +102,38 @@ app.get('/ping', async (_: Request, res: Response) => {
           headers: {
               'Content-Type': 'application/json',
               'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
-              // 'Authorization': 'Bearer rnd_B7E8r486oi9m9LfBStGK5eyrkG3K'
           },
           data: {
               text: 'Your text here',
           },
       };
 
-      const response = await axios(requestOptions).then((response) => {console.log(response); return response;}).catch((error) => {return res.json(error)});
-      
-  
-      // Extract only the necessary data from the response
+      // Making the request and directly assigning the response to a variable
+      const response = await axios(requestOptions);
+
+      // Log the entire response object
+      console.log(response);
+
+      // Extracting necessary data from the response
       const responseData = {
           status: response.status,
-          // data: response?.data
+          data: response.data
       };
 
-      console.log(responseData)
+      // Log the extracted data
+      console.log(responseData);
 
-      res.send(responseData);
+      // Sending the extracted data in the response
+      res.json(responseData);
   } catch (error) {
+      // Handle errors if the request fails
       console.error('Error:', error);
+
+      // Sending error response
       res.status(500).json(error);
   }
 });
+
 app.listen(port, () => {
  
 
