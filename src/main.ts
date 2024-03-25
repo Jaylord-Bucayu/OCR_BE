@@ -109,14 +109,16 @@ app.get('/ping', async (_: Request, res: Response) => {
           },
       };
 
-      const response = await axios(requestOptions);
+      const response = await axios(requestOptions).then((response) => {console.log(response); return response;}).catch((error) => {return res.json(error)});
       
-      console.log(response)
+  
       // Extract only the necessary data from the response
       const responseData = {
           status: response.status,
-          data: response.data
+          // data: response?.data
       };
+
+      console.log(responseData)
 
       res.send(responseData);
   } catch (error) {
