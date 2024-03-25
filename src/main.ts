@@ -102,7 +102,7 @@ app.get('/ping', async (_: Request, res: Response) => {
           headers: {
               'Content-Type': 'application/json',
               'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
-              'Authorization': 'Bearer rnd_B7E8r486oi9m9LfBStGK5eyrkG3K'
+              // 'Authorization': 'Bearer rnd_B7E8r486oi9m9LfBStGK5eyrkG3K'
           },
           data: {
               text: 'Your text here',
@@ -111,16 +111,17 @@ app.get('/ping', async (_: Request, res: Response) => {
 
       const response = await axios(requestOptions);
       
+      console.log(response)
       // Extract only the necessary data from the response
       const responseData = {
           status: response.status,
           data: response.data
       };
 
-      res.json(responseData);
+      res.send(responseData);
   } catch (error) {
       console.error('Error:', error);
-      res.status(500).send(error);
+      res.status(500).json(error);
   }
 });
 app.listen(port, () => {
