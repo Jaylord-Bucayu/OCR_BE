@@ -94,6 +94,7 @@ BooksRoutes(app);
 import axios from 'axios';
 app.get('/ping', async(_: Request,res:Response) => {
      
+  console.log("PINGG")
  let response:any;
 
   const requestOptions = {
