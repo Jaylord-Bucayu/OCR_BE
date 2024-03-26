@@ -131,7 +131,7 @@ import axios from 'axios';
 // });
 
 
-app.get('ping',async(_:Request, res:Response) => {
+app.get('/ping',async(_:Request, res:Response) => {
    
   res.send({message:"PING"})
 })
