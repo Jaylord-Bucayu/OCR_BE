@@ -260,7 +260,7 @@ export async function getSingleBookPages(req: Request, res: Response) {
       if (!Array.isArray(book.page)) {
         return res.status(500).send({ error: 'Invalid page data in the book' });
     }
-    
+
       // Transform book pages into the desired structure
       const pages = book?.page.map((page:any, index:any) => {
           return {
@@ -268,7 +268,7 @@ export async function getSingleBookPages(req: Request, res: Response) {
               pageType: page.pageType || 'Page', // Assuming default pageType is 'Page'
               points: page.points || 20, // Assuming default points is 20
               pageNumber: page.pageNumber || index + 1, // Assuming default pageNumber is the index + 1
-              pageText: page.pageText,
+              pageText: page,
               pagePhoto: book.photos && book.photos[index] ? book.photos[index] : '/assets/images/default_photo.png' // Assuming default photo path if photo is not provided
           };
       });
