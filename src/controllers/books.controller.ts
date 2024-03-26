@@ -231,17 +231,24 @@ export async function getSingleBookPage(req: Request, res: Response) {
   }
 
   // Ensure that query.page is a number or default to 0
-  const audioIndex = typeof query.page === 'number' ? query.page : 0;
+  let audioIndex: number;
 
-  const pageData = page.page instanceof Map ? page.page.get(String(audioIndex)) : undefined;
+  //@ts-ignore
+  audioIndex = parseInt(query.page) - 1;
+  
+  // Now you can increment audioIndex safely
 
+
+  const pageData:any = page.page || undefined;
+
+  console.log(audioIndex)
   const single_page = {
       timestamp: page.timestamp?.[audioIndex],
       title: page.title,
       description: page.description,
       photos: page.photos?.[audioIndex],
       audio: page.audio?.[audioIndex],
-      page:pageData,
+      page:pageData[audioIndex] || '',
       pageNo:audioIndex + 1
   };
 
