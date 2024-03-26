@@ -92,47 +92,44 @@ BooksRoutes(app);
 //   });
 
 import axios from 'axios';
-app.get('/ping', async (_: Request, res: Response) => {
+app.get('/ping', async (_:Request, res:Response) => {
   console.log("PINGG");
 
   try {
-      const requestOptions = {
-          method: 'POST',
-          url: 'https://api.elevenlabs.io/v1/text-to-speech/pgvQzWEjnAimoQc8qtUG',
-          headers: {
-              'Content-Type': 'application/json',
-              'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
-          },
-          data: {
-              text: 'Your text here',
-          },
-      };
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
+      },
+      body: JSON.stringify({
+        text: 'Your text here',
+      }),
+    };
 
-      // Making the request and directly assigning the response to a variable
-      const response = await axios(requestOptions);
+    // Making the request using fetch
+    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/pgvQzWEjnAimoQc8qtUG', requestOptions);
 
-      // Log the entire response object
-      console.log(response);
+    // Parsing JSON response
+    const responseData = await response.json();
 
-      // Extracting necessary data from the response
-      const responseData = {
-          status: response.status,
-          data: response.data
-      };
+    // Log the entire response object
+    console.log(responseData);
 
-      // Log the extracted data
-      console.log(responseData);
-
-      // Sending the extracted data in the response
-      res.json(responseData);
+    // Sending the extracted data in the response
+    res.json({
+      status: response.status,
+      data: responseData
+    });
   } catch (error) {
-      // Handle errors if the request fails
-      console.error('Error:', error);
+    // Handle errors if the request fails
+    console.error('Error:', error);
 
-      // Sending error response
-      res.status(500).json(error);
+    // Sending error response
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 app.listen(port, () => {
  
