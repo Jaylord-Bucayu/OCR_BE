@@ -6,7 +6,8 @@ import {
     getSingleBook,
     updateSingleBook,
     userSubscription,
-    getSingleBookPage
+    getSingleBookPage,
+    getSingleBookPages
 } from "../controllers/books.controller";
 
 export function BooksRoutes(app: Application) {
@@ -34,6 +35,7 @@ export function BooksRoutes(app: Application) {
 
 
     app.get("/book/:id/get",getSingleBookPage)
+    app.get("/book/:id/single/page",getSingleBookPages)
 
     app.get("/book/subscription",userSubscription)
     

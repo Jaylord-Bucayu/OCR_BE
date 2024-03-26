@@ -247,3 +247,35 @@ export async function getSingleBookPage(req: Request, res: Response) {
 
   res.send(single_page);
 }
+
+export async function getSingleBookPages(req: Request, res: Response) {
+  try {
+      const params = req.params;
+      const book = await Books.findById(params.id);
+
+      if (!book) {
+          return res.status(404).send({ error: 'No book found with the provided ID' });
+      }
+    
+      if (!Array.isArray(book.page)) {
+        return res.status(500).send({ error: 'Invalid page data in the book' });
+    }
+    
+      // Transform book pages into the desired structure
+      const pages = book?.page.map((page:any, index:any) => {
+          return {
+              id: index + 1,
+              pageType: page.pageType || 'Page', // Assuming default pageType is 'Page'
+              points: page.points || 20, // Assuming default points is 20
+              pageNumber: page.pageNumber || index + 1, // Assuming default pageNumber is the index + 1
+              pageText: page.pageText,
+              pagePhoto: book.photos && book.photos[index] ? book.photos[index] : '/assets/images/default_photo.png' // Assuming default photo path if photo is not provided
+          };
+      });
+
+      res.send(pages);
+  } catch (error) {
+      console.error('Error fetching book:', error);
+      res.status(500).send({ error: 'Internal server error' });
+  }
+}
