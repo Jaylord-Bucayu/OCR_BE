@@ -249,7 +249,8 @@ export async function getSingleBookPage(req: Request, res: Response) {
       photos: page.photos?.[audioIndex],
       audio: page.audio?.[audioIndex],
       page:pageData[audioIndex] || '',
-      pageNo:audioIndex + 1
+      pageNo:audioIndex + 1,
+      totalPageNo:page.timestamp.length || page.audio?.length
   };
 
   res.send(single_page);
@@ -283,6 +284,50 @@ export async function getSingleBookPages(req: Request, res: Response) {
       res.send(pages);
   } catch (error) {
       console.error('Error fetching book:', error);
+      res.status(500).send({ error: 'Internal server error' });
+  }
+}
+
+export async function editSinglePage(req: Request, res: Response) {
+  try {
+      const { bookId, pageId }:any = req.params;
+      const { page } = req.body;
+
+      console.log(req.params)
+
+      // Retrieve the book
+      const book = await Books.findById(bookId);
+
+      if (!book) {
+          return res.status(404).send({ error: 'No book found with the provided ID' });
+      }
+
+      // Ensure book.page is an array
+      if (!Array.isArray(book.page)) {
+          return res.status(500).send({ error: 'Invalid page data in the book' });
+      }
+
+      // Find the page to edit
+      const pageToEdit = book.page[pageId - 1]; // Assuming pageId is 1-based index
+
+      if (!pageToEdit) {
+          return res.status(404).send({ error: 'No page found with the provided ID' });
+      }
+
+      // Update the page properties
+      if (page) {
+          pageToEdit.page = page;
+      }
+      // if (pagePhoto) {
+      //     pageToEdit.pagePhoto = pagePhoto;
+      // }
+
+      // Save the updated book
+      await book.save();
+
+      res.send({ message: 'Page updated successfully', updatedPage: pageToEdit });
+  } catch (error) {
+      console.error('Error editing page:', error);
       res.status(500).send({ error: 'Internal server error' });
   }
 }
