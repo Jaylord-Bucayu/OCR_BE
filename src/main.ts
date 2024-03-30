@@ -92,43 +92,43 @@ BooksRoutes(app);
 //   });
 
 import axios from 'axios';
-// app.get('/ping', async (_:Request, res:Response) => {
-//   console.log("PINGG");
+app.get('/ping', async (_:Request, res:Response) => {
+  console.log("PINGG");
 
-//   try {
-//     const requestOptions = {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
-//       },
-//       body: JSON.stringify({
-//         text: 'Your text here',
-//       }),
-//     };
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c',
+      },
+      body: JSON.stringify({
+        text: 'Your text here',
+      }),
+    };
 
-//     // Making the request using fetch
-//     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/pgvQzWEjnAimoQc8qtUG', requestOptions);
+    // Making the request using fetch
+    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/pgvQzWEjnAimoQc8qtUG', requestOptions);
 
-//     // Parsing JSON response
-//     const responseData = await response.json();
+    // Parsing JSON response
+    const responseData = await response.json();
 
-//     // Log the entire response object
-//     console.log(responseData);
+    // Log the entire response object
+    console.log(responseData);
 
-//     // Sending the extracted data in the response
-//     res.json({
-//       status: response.status,
-//       data: responseData
-//     });
-//   } catch (error) {
-//     // Handle errors if the request fails
-//     console.error('Error:', error);
+    // Sending the extracted data in the response
+    res.json({
+      status: response.status,
+      data: responseData
+    });
+  } catch (error) {
+    // Handle errors if the request fails
+    console.error('Error:', error);
 
-//     // Sending error response
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+    // Sending error response
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 app.get('/ping',async(_:Request, res:Response) => {

@@ -309,14 +309,15 @@ export async function editSinglePage(req: Request, res: Response) {
 
       // Find the page to edit
       const pageToEdit = book.page[pageId - 1]; // Assuming pageId is 1-based index
-
+     
+      console.log({pageToEdit})
       if (!pageToEdit) {
           return res.status(404).send({ error: 'No page found with the provided ID' });
       }
 
       // Update the page properties
       if (page) {
-          pageToEdit.page = page;
+        book.page[pageId - 1] = page;
       }
       // if (pagePhoto) {
       //     pageToEdit.pagePhoto = pagePhoto;

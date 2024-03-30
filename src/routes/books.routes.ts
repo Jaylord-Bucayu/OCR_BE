@@ -26,6 +26,9 @@ export function BooksRoutes(app: Application) {
     );
     
 
+    app.patch("/book/:bookId/single/edit/page/:pageId",editSinglePage)
+    
+
     app.get("/book/:id",
     getSingleBook
     );
@@ -34,7 +37,7 @@ export function BooksRoutes(app: Application) {
     app.patch("/book/:id",
     updateSingleBook)
 
-    app.post("/book/:bookId/single/page/:pageId ",editSinglePage)
+ 
 
     app.get("/book/:id/get",getSingleBookPage)
     app.get("/book/:id/single/page",getSingleBookPages)
