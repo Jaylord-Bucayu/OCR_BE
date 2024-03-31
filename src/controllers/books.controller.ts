@@ -70,7 +70,7 @@ export async function createBook(req: Request, res: Response) {
       headers: {
         //'Accept': 'audio/mpeg',
         'Content-Type': 'application/json',
-        'xi-api-key': '3656ebc4b23ff237c11792a9dfcd2c2c' ?? XI_API_KEY,
+        'xi-api-key': XI_API_KEY,
       },
       responseType: 'stream'
     }).then(function (response) {
