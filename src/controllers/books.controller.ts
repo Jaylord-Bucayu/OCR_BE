@@ -88,11 +88,11 @@ export async function createBook(req: Request, res: Response) {
     console.log(response)
       
    
-    const audioData = await new Promise<Buffer>((resolve, _) => {
+    const audioData = await new Promise<Buffer>((resolve, reject) => {
       const chunks: Buffer[] = [];
       response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
       response.data.on('end', () => resolve(Buffer.concat(chunks)));
-      response.data.on('error', (error: any) => console.log(error));
+      response.data.on('error', (error: any) => reject(error));
     });
 
     const result = await new Promise<any>((resolve, reject) => {
@@ -136,21 +136,21 @@ export async function createBook(req: Request, res: Response) {
 
     await book.save();
 
-    res.status(200).send(book)
+   
 
   } catch (error) {
     console.error('Error processing audio:', error);
-    console.log(error.message)
+   
     res.status(200).send(book)
   }
 }
 
-    
+
     
 //end for
     await book.save();
     // Send the book object as a response after all asynchronous operations have completed
-    res.send(book);
+    res.status(200).send(book)
 
   } catch (error) {
     console.error('Error creating book:', error);
