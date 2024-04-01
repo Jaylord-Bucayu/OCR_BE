@@ -88,7 +88,7 @@ export async function createBook(req: Request, res: Response) {
     console.log(response)
       
    
-    const audioData = await new Promise<Buffer>((resolve, reject) => {
+    const audioData = await new Promise<Buffer>((resolve, _) => {
       const chunks: Buffer[] = [];
       response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
       response.data.on('end', () => resolve(Buffer.concat(chunks)));
