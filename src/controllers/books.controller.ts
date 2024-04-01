@@ -53,13 +53,16 @@ export async function createBook(req: Request, res: Response) {
   console.log("INDEX: " + x);
 
   const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
-  const VOICE_ID = process.env.ELEVEN_LABS_VOICE_ID;
+  const VOICE_ID:any = {
+    "male":process.env.ELEVEN_LABS_VOICE_ID_MALE,
+    "female":process.env.ELEVEN_LABS_VOICE_ID_FEMALE
+  };
   const textToSpeak = ret.data.text;
 
  let response: any;
   
  try {
-     response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+     response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[data.gender]}`, {
       text: textToSpeak,
       model_id: "eleven_monolingual_v1",
       voice_settings: {
@@ -137,6 +140,8 @@ export async function createBook(req: Request, res: Response) {
 
   } catch (error) {
     console.error('Error processing audio:', error);
+    console.log(error.message)
+    res.status(200).send(book)
   }
 }
 
