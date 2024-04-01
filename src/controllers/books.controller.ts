@@ -92,7 +92,7 @@ export async function createBook(req: Request, res: Response) {
       const chunks: Buffer[] = [];
       response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
       response.data.on('end', () => resolve(Buffer.concat(chunks)));
-      response.data.on('error', (error: any) => reject(error));
+      response.data.on('error', (error: any) => console.log(error));
     });
 
     const result = await new Promise<any>((resolve, reject) => {
