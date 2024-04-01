@@ -133,6 +133,8 @@ export async function createBook(req: Request, res: Response) {
 
     await book.save();
 
+    res.status(200).send(book)
+
   } catch (error) {
     console.error('Error processing audio:', error);
   }
