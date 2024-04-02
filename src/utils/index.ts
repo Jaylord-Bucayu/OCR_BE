@@ -49,11 +49,14 @@ export const uploadImagesToCloudinary = async (files: any) => {
   };
 
 
+let images =Array.isArray(files.images) ? files.images : [files.images];
+
+
   try {
     const uploadedImagesUrls: string[] = [];
   
 
-    for (const file of files.images) {
+    for (const file of images) {
       const base64String = Buffer.from(file.data).toString('base64');
 
       const result = await cloudinary.uploader.upload(`data:${file.mimetype};base64,${base64String}`,options);
