@@ -62,7 +62,7 @@ export async function createBook(req: Request, res: Response) {
  let response: any;
   
  try {
-     response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID["male"]}`, {
+     response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[data.gender]}`, {
       text: textToSpeak,
       model_id: "eleven_monolingual_v1",
       voice_settings: {
