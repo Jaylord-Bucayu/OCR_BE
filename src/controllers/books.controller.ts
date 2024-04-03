@@ -199,7 +199,7 @@ export async function updateSingleBook(req: Request, res: Response) {
     const body = req.body;
     const book = await Books.findByIdAndUpdate(params?.id,body);
 
-    res.send(book)
+    res.status(200).send(book)
    } catch (error) {
      console.log(error),
      res.status(500).send({error:"Error updating the book"})
@@ -314,7 +314,7 @@ export async function deleteSingleBook(req: Request, res: Response) {
       return res.status(404).send('Page not found');
     }
 
-    res.send('Page deleted successfully');
+    res.status(200).send('Page deleted successfully');
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -495,7 +495,7 @@ export async function deleteSinglePage(req: Request, res: Response) {
     // Save the updated book
     await book.save();
 
-    res.send({ message: 'Page deleted successfully', deletedPage });
+    res.status(200).send({ message: 'Page deleted successfully', deletedPage });
   } catch (error) {
     console.error('Error deleting page:', error);
     res.status(500).send({ error: 'Internal server error' });
@@ -621,7 +621,7 @@ export async function addSinglePage(req: Request, res: Response) {
       }
     }
 
-    res.send({ message: 'Pages added successfully' });
+    res.status(200).send({ message: 'Pages added successfully' });
   } catch (error) {
     console.error('Error adding pages:', error);
     res.status(500).send({ error: 'Internal server error' });
