@@ -496,7 +496,7 @@ export async function deleteSinglePage(req: Request, res: Response) {
 export async function addSinglePage(req: Request, res: Response) {
   try {
     const { bookId }: any = req.params;
-    const { page, gender } = req.body;
+    const { gender } = req.body;
 
     // Retrieve the book
     const book = await Books.findById(bookId);
@@ -506,12 +506,23 @@ export async function addSinglePage(req: Request, res: Response) {
     }
 
     // Ensure book.page is an array
-    if (!Array.isArray(book.page)) {
+    if (!Array.isArray(book.page) || !Array.isArray(book.photos)) {
       return res.status(500).send({ error: 'Invalid page data in the book' });
     }
 
+
+
     // Push the new page into the book
-    book.page.push(page);
+    const uploadedImagesUrls = await uploadImagesToCloudinary(req.files);
+
+    const worker = await createWorker('eng');
+    const ret = await worker.recognize(uploadedImagesUrls[0]);
+
+    book.photos.push(uploadedImagesUrls[0]);
+    book.page.push(ret.data.text);
+    await worker.terminate();
+
+    
 
     // Text to speech and upload audio process
     const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
@@ -524,7 +535,7 @@ export async function addSinglePage(req: Request, res: Response) {
 
     try {
       response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
-        text: page,
+        text: ret.data.text,
         model_id: "eleven_monolingual_v1",
         voice_settings: {
           stability: 0.5,
@@ -590,7 +601,7 @@ export async function addSinglePage(req: Request, res: Response) {
       return res.status(500).send({ error: 'Error processing audio' });
     }
 
-    res.send({ message: 'Page added successfully', newPage: page });
+    res.send({ message: 'Page added successfully' });
   } catch (error) {
     console.error('Error adding page:', error);
     res.status(500).send({ error: 'Internal server error' });
