@@ -324,7 +324,7 @@ export async function deleteSingleBook(req: Request, res: Response) {
 export async function editSinglePage(req: Request, res: Response) {
   try {
       const { bookId, pageId }:any = req.params;
-      const { page,gender } = req.body;
+      const { page } = req.body;
 
       console.log(req.params)
 
@@ -351,7 +351,7 @@ export async function editSinglePage(req: Request, res: Response) {
       // Update the page properties
       if (page) {
         book.page[pageId - 1] = page;
-        book.gender = gender;
+       
 
         const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
         const VOICE_ID:any = {
@@ -361,9 +361,10 @@ export async function editSinglePage(req: Request, res: Response) {
         const textToSpeak = page;
       
        let response: any;
-        
+     
+    
        try {
-           response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
+           response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[book?.gender || 'female']}`, {
             text: textToSpeak,
             model_id: "eleven_monolingual_v1",
             voice_settings: {
@@ -505,10 +506,14 @@ export async function deleteSinglePage(req: Request, res: Response) {
 export async function addSinglePage(req: Request, res: Response) {
   try {
     const { bookId }: any = req.params;
-    const { gender } = req.body;
+    // const { gender } = req.body;
+
+  
 
     // Retrieve the book
     const book = await Books.findById(bookId);
+
+
 
     if (!book) {
       return res.status(404).send({ error: 'No book found with the provided ID' });
@@ -548,7 +553,7 @@ export async function addSinglePage(req: Request, res: Response) {
       let response: any;
 
       try {
-        response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
+        response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[book?.gender || 'female']}`, {
           text: text,
           model_id: "eleven_monolingual_v1",
           voice_settings: {
