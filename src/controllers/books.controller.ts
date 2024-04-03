@@ -295,6 +295,23 @@ export async function getSingleBookPages(req: Request, res: Response) {
   }
 }
 
+export async function deleteSingleBook(req: Request, res: Response) {
+  const params = req.params;
+
+  try {
+    const deletedPage = await Books.findByIdAndDelete(params.id);
+
+    if (!deletedPage) {
+      return res.status(404).send('Page not found');
+    }
+
+    res.send('Page deleted successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 export async function editSinglePage(req: Request, res: Response) {
   try {
       const { bookId, pageId }:any = req.params;

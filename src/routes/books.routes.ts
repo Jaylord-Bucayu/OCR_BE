@@ -10,7 +10,8 @@ import {
     getSingleBookPages,
     editSinglePage,
     addSinglePage,
-    deleteSinglePage
+    deleteSinglePage,
+    deleteSingleBook
 } from "../controllers/books.controller";
 
 export function BooksRoutes(app: Application) {
@@ -37,6 +38,9 @@ export function BooksRoutes(app: Application) {
     getSingleBook
     );
 
+
+    app.delete("/book/:id",
+    deleteSingleBook)
 
     app.patch("/book/:id",
     updateSingleBook)
