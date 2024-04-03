@@ -10,6 +10,8 @@ interface I extends Document {
   timestamp?: any;
   text?: string | null;
   audio?: string[];
+  gender?:string | null;
+  
   
 }
 
@@ -31,6 +33,11 @@ const bookSchema: Schema<I> = new Schema<I>(
     },
     timestamp:{
       type: [[Object]],
+     
+    },
+    gender:{
+      type:String,
+      default:"female"
      
     },
     text:{

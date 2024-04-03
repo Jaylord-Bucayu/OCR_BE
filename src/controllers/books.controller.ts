@@ -44,6 +44,8 @@ export async function createBook(req: Request, res: Response) {
     // Append the uploaded image URLs to the existing photos array
     book.photos.push(...uploadedImagesUrls);
 
+    book.gender = data.gender;
+
   for (let x = 0; x < uploadedImagesUrls.length; x++) {
   const worker = await createWorker('eng');
   const ret = await worker.recognize(uploadedImagesUrls[x]);
@@ -192,11 +194,16 @@ export async function getSingleBook(req: Request, res: Response) {
 
 export async function updateSingleBook(req: Request, res: Response) {
 
+   try {
     const params = req.params;
     const body = req.body;
     const book = await Books.findByIdAndUpdate(params?.id,body);
 
     res.send(book)
+   } catch (error) {
+     console.log(error),
+     res.status(500).send({error:"Error updating the book"})
+   }
 
 }
 
@@ -257,7 +264,8 @@ export async function getSingleBookPage(req: Request, res: Response) {
       audio: page.audio?.[audioIndex],
       page:pageData[audioIndex] || '',
       pageNo:audioIndex + 1,
-      totalPageNo:page.timestamp.length || page.audio?.length
+      totalPageNo:page.timestamp.length || page.audio?.length,
+      gender:page.gender
   };
 
   res.send(single_page);
@@ -284,7 +292,8 @@ export async function getSingleBookPages(req: Request, res: Response) {
               points: page.points || 20, // Assuming default points is 20
               pageNumber: page.pageNumber || index + 1, // Assuming default pageNumber is the index + 1
               pageText: page,
-              pagePhoto: book.photos && book.photos[index] ? book.photos[index] : '/assets/images/default_photo.png' // Assuming default photo path if photo is not provided
+              pagePhoto: book.photos && book.photos[index] ? book.photos[index] : '/assets/images/default_photo.png', // Assuming default photo path if photo is not provided
+              gender: book.gender
           };
       });
 
@@ -342,7 +351,7 @@ export async function editSinglePage(req: Request, res: Response) {
       // Update the page properties
       if (page) {
         book.page[pageId - 1] = page;
-
+        book.gender = gender;
 
         const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
         const VOICE_ID:any = {
