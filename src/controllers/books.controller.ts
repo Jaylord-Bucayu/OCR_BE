@@ -87,7 +87,7 @@ export async function createBook(req: Request, res: Response) {
       console.log({error});
     });
 
-    console.log(response)
+
       
    
     const audioData = await new Promise<Buffer>((resolve, reject) => {
@@ -454,7 +454,7 @@ export async function editSinglePage(req: Request, res: Response) {
       // Save the updated book
       await book.save();
 
-      res.send({ message: 'Page updated successfully', updatedPage: pageToEdit });
+      res.status(200).send({ message: 'Page updated successfully', updatedPage: pageToEdit });
   } catch (error) {
       console.error('Error editing page:', error);
       res.status(500).send({ error: 'Internal server error' });
