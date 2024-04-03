@@ -510,101 +510,106 @@ export async function addSinglePage(req: Request, res: Response) {
       return res.status(500).send({ error: 'Invalid page data in the book' });
     }
 
-
-
-    // Push the new page into the book
+    // Upload images to Cloudinary
     const uploadedImagesUrls = await uploadImagesToCloudinary(req.files);
 
-    const worker = await createWorker('eng');
-    const ret = await worker.recognize(uploadedImagesUrls[0]);
+    // Process each uploaded image
+    for (let i = 0; i < uploadedImagesUrls.length; i++) {
+      const imageUrl = uploadedImagesUrls[i];
 
-    book.photos.push(uploadedImagesUrls[0]);
-    book.page.push(ret.data.text);
-    await worker.terminate();
+      // Perform OCR to extract text from the image
 
-    
+      const worker = await createWorker('eng');
 
-    // Text to speech and upload audio process
-    const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
-    const VOICE_ID: any = {
-      "male": process.env.ELEVEN_LABS_VOICE_ID_MALE,
-      "female": process.env.ELEVEN_LABS_VOICE_ID_FEMALE
-    };
+      const { data: { text } } = await worker.recognize(imageUrl);
+      book.page.push(text);
+      await worker.terminate();
 
-    let response: any;
+      // Push the extracted text and image URL into the book
+      book.photos.push(imageUrl);
+      
 
-    try {
-      response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
-        text: ret.data.text,
-        model_id: "eleven_monolingual_v1",
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.5
-        }
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'xi-api-key': XI_API_KEY,
-        },
-        responseType: 'stream'
-      });
-
-      const audioData = await new Promise<Buffer>((resolve, reject) => {
-        const chunks: Buffer[] = [];
-        response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
-        response.data.on('end', () => resolve(Buffer.concat(chunks)));
-        response.data.on('error', (error: any) => reject(error));
-      });
-
-      const result = await new Promise<any>((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
-          if (error) {
-            console.error('Error uploading audio to Cloudinary:', error);
-            reject(error);
-            return;
-          }
-          console.log('Audio uploaded to Cloudinary:', result.secure_url);
-          resolve(result);
-        }).end(audioData);
-      });
-
-      if (!Array.isArray(book.audio)) {
-        book.audio = [];
-      }
-      book.audio.push(result.secure_url);
-
-      await book.save();
-
-      const client = new AssemblyAI({
-        apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
-      });
-
-      const audioUrl = result.secure_url;
-      const config = {
-        audio_url: audioUrl
+      // Text to speech and upload audio process
+      const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
+      const VOICE_ID: any = {
+        "male": process.env.ELEVEN_LABS_VOICE_ID_MALE,
+        "female": process.env.ELEVEN_LABS_VOICE_ID_FEMALE
       };
 
-      const transcript = await client.transcripts.transcribe(config);
+      let response: any;
 
-      if (!book.timestamp) {
-        book.timestamp = [];
+      try {
+        response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
+          text: text,
+          model_id: "eleven_monolingual_v1",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.5
+          }
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'xi-api-key': XI_API_KEY,
+          },
+          responseType: 'stream'
+        });
+
+        const audioData = await new Promise<Buffer>((resolve, reject) => {
+          const chunks: Buffer[] = [];
+          response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
+          response.data.on('end', () => resolve(Buffer.concat(chunks)));
+          response.data.on('error', (error: any) => reject(error));
+        });
+
+        const result = await new Promise<any>((resolve, reject) => {
+          cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
+            if (error) {
+              console.error('Error uploading audio to Cloudinary:', error);
+              reject(error);
+              return;
+            }
+            console.log('Audio uploaded to Cloudinary:', result.secure_url);
+            resolve(result);
+          }).end(audioData);
+        });
+
+        if (!Array.isArray(book.audio)) {
+          book.audio = [];
+        }
+        book.audio.push(result.secure_url);
+
+        await book.save();
+
+        const client = new AssemblyAI({
+          apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
+        });
+
+        const audioUrl = result.secure_url;
+        const config = {
+          audio_url: audioUrl
+        };
+
+        const transcript = await client.transcripts.transcribe(config);
+
+        if (!book.timestamp) {
+          book.timestamp = [];
+        }
+
+        if (transcript.words) {
+          console.log("PUSHED");
+          book.timestamp.push(transcript.words);
+        }
+
+        await book.save();
+      } catch (error) {
+        console.error('Error processing audio:', error);
+        return res.status(500).send({ error: 'Error processing audio' });
       }
-
-      if (transcript.words) {
-        console.log("PUSHED");
-        book.timestamp.push(transcript.words);
-      }
-
-      await book.save();
-    } catch (error) {
-      console.error('Error processing audio:', error);
-      return res.status(500).send({ error: 'Error processing audio' });
     }
 
-    res.send({ message: 'Page added successfully' });
+    res.send({ message: 'Pages added successfully' });
   } catch (error) {
-    console.error('Error adding page:', error);
+    console.error('Error adding pages:', error);
     res.status(500).send({ error: 'Internal server error' });
   }
 }
-
