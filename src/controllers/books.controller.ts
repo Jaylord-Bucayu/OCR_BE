@@ -314,8 +314,10 @@ export async function deleteSingleBook(req: Request, res: Response) {
 
 export async function editSinglePage(req: Request, res: Response) {
   try {
-      const { bookId, pageId }: any = req.params;
-      const { page, gender } = req.body;
+      const { bookId, pageId }:any = req.params;
+      const { page,gender } = req.body;
+
+      console.log(req.params)
 
       // Retrieve the book
       const book = await Books.findById(bookId);
@@ -331,7 +333,8 @@ export async function editSinglePage(req: Request, res: Response) {
 
       // Find the page to edit
       const pageToEdit = book.page[pageId - 1]; // Assuming pageId is 1-based index
-
+     
+      console.log({pageToEdit})
       if (!pageToEdit) {
           return res.status(404).send({ error: 'No page found with the provided ID' });
       }
@@ -340,18 +343,18 @@ export async function editSinglePage(req: Request, res: Response) {
       if (page) {
         book.page[pageId - 1] = page;
 
-        // Text to speech and upload audio process
+
         const XI_API_KEY = process.env.ELEVEN_LABS_KEY;
-        const VOICE_ID: any = {
-          "male": process.env.ELEVEN_LABS_VOICE_ID_MALE,
-          "female": process.env.ELEVEN_LABS_VOICE_ID_FEMALE
+        const VOICE_ID:any = {
+          "male":process.env.ELEVEN_LABS_VOICE_ID_MALE,
+          "female":process.env.ELEVEN_LABS_VOICE_ID_FEMALE
         };
         const textToSpeak = page;
-
-        let response: any;
-
-        try {
-          response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
+      
+       let response: any;
+        
+       try {
+           response = await axios.post(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID[gender]}`, {
             text: textToSpeak,
             model_id: "eleven_monolingual_v1",
             voice_settings: {
@@ -360,19 +363,30 @@ export async function editSinglePage(req: Request, res: Response) {
             }
           }, {
             headers: {
+              //'Accept': 'audio/mpeg',
               'Content-Type': 'application/json',
               'xi-api-key': XI_API_KEY,
             },
             responseType: 'stream'
+          }).then(function (response) {
+            console.log({response});
+      
+            return response;
+          })
+          .catch(function (error) {
+            console.log({error});
           });
-
+      
+          console.log(response.data)
+            
+         
           const audioData = await new Promise<Buffer>((resolve, reject) => {
             const chunks: Buffer[] = [];
             response.data.on('data', (chunk: Buffer) => chunks.push(chunk));
             response.data.on('end', () => resolve(Buffer.concat(chunks)));
             response.data.on('error', (error: any) => reject(error));
           });
-
+      
           const result = await new Promise<any>((resolve, reject) => {
             cloudinary.uploader.upload_stream({ resource_type: "video" }, async (error: any, result: any) => {
               if (error) {
@@ -384,40 +398,48 @@ export async function editSinglePage(req: Request, res: Response) {
               resolve(result);
             }).end(audioData);
           });
-
+      
           if (!Array.isArray(book.audio)) {
             book.audio = [];
           }
           book.audio[pageId - 1] = result.secure_url;
-
+      
           await book.save();
-
+      
           const client = new AssemblyAI({
             apiKey: "3b7a960b7d304bef9b2ad6df971d6090"
           });
-
+      
           const audioUrl = result.secure_url;
           const config = {
             audio_url: audioUrl
           };
-
+      
           const transcript = await client.transcripts.transcribe(config);
-
+      
           if (!book.timestamp) {
             book.timestamp = [];
           }
-
+      
           if (transcript.words) {
             console.log("PUSHED");
             book.timestamp[pageId - 1] = transcript.words;
           }
-
+      
           await book.save();
+      
+         
+      
         } catch (error) {
           console.error('Error processing audio:', error);
-          return res.status(500).send({ error: 'Error processing audio' });
+         
+          res.status(200).send(book)
         }
+
       }
+      // if (pagePhoto) {
+      //     pageToEdit.pagePhoto = pagePhoto;
+      // }
 
       // Save the updated book
       await book.save();
@@ -428,7 +450,6 @@ export async function editSinglePage(req: Request, res: Response) {
       res.status(500).send({ error: 'Internal server error' });
   }
 }
-
 
 export async function deleteSinglePage(req: Request, res: Response) {
   try {
