@@ -648,9 +648,7 @@ export async function getAllBooksPublishedByUser(req: Request, res: Response) {
     const customReq = req as any;
 
     // Check if user information is attached to the request object
-    if (!customReq.auth || !customReq.auth.id) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+ 
       // Fetch all books published by the user
       const publishedBooks = await Books.find({ author: customReq?.auth.id });
 

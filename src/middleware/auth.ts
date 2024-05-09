@@ -25,7 +25,7 @@ const middleware = async (req: CustomRequest, res: Response, next: NextFunction)
 
 
         if (!token) {
-            throw new Error('Access denied. No token provided.');
+            return res.status(401).send({message:"Unauthorized"});
         }
 
         const data = jwt.verify(token, APP_KEY) as { auth: string };
