@@ -2,10 +2,10 @@
 import { v2 as cloudinary } from 'cloudinary' 
 import multer from 'multer'
 import 'dotenv/config';
-import fs from 'fs';
+//import fs from 'fs';
 import XLSX from 'xlsx';
-import csv from 'csv-parser';
-import { Readable } from 'stream';
+// import csv from 'csv-parser';
+// import { Readable } from 'stream';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -94,14 +94,14 @@ export function generateStudentId(): string {
     return randomFileName;
   }
 
-  interface RowData {
-    email: string;
-    mobile: string;
-    firstname: string;
-    middlename: string;
-    lastname: string;
-    // Add other fields as needed
-}
+//   interface RowData {
+//     email: string;
+//     mobile: string;
+//     firstname: string;
+//     middlename: string;
+//     lastname: string;
+//     // Add other fields as needed
+// }
 
  export async function parseFile(file: Express.Multer.File) {
 

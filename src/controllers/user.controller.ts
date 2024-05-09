@@ -1,8 +1,8 @@
 
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
-import XLSX  from 'xlsx';
-import csv from 'csv-parser';
+// import XLSX  from 'xlsx';
+// import csv from 'csv-parser';
 
 //MODELS
 import User from '../models/user';

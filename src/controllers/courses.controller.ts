@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import Courses from '../models/courses';
 
-import {generateRandomString} from '../utils/index'
+// import {generateRandomString} from '../utils/index'
 
 export async function getList(req:Request, res: Response) {
 
@@ -36,45 +36,45 @@ export async function update(req:Request, res: Response){
 }
 
 
- export async function create(req:Request, res: Response) { 
+//  export async function create(req:Request, res: Response) { 
 
-    try {
-        const data = req.body;
-    const payment = new Courses(data);
-    payment.teacher = req?.auth.id;
-    payment.code = generateRandomString(6);
+//     try {
+//         const data = req.body;
+//     const payment = new Courses(data);
+//     payment.teacher = req?.auth.id;
+//     payment.code = generateRandomString(6);
 
 
-    await payment.save();
-    res.send(payment)
-    } catch (error) {
+//     await payment.save();
+//     res.send(payment)
+//     } catch (error) {
          
-        return res.status(500).send(error)
-    }
+//         return res.status(500).send(error)
+//     }
 
-}
+// }
 
 
-export async function enroll(req:Request, res:Response){
+// export async function enroll(req:Request, res:Response){
     
-    const {code} = req.body
+//     const {code} = req.body
     
-    const course = await Courses.findOne({code})
+//     const course = await Courses.findOne({code})
 
-    if(!course) return res.send(500).send({message:"Course code not found"});
+//     if(!course) return res.send(500).send({message:"Course code not found"});
         
-    course?.students.push(req.auth.id);
+//     course?.students.push(req.auth.id);
 
-    await course.save();
+//     await course.save();
     
-    const data = {message:"You successfully enrolled"}
+//     const data = {message:"You successfully enrolled"}
 
-     res.send(200).send(data);
+//      res.send(200).send(data);
 
-}
+// }
 
-export async getAllStudentInCourse(req: Request, res: Response){
+// export async getAllStudentInCourse(req: Request, res: Response){
 
 
-}
+// }
 

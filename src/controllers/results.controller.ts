@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Results from '../models/results'; // Import the Results model
-import User from '../models/user';
+// import User from '../models/user';
 
 export async function saveCompletedReading(req: Request, res: Response) {
     try {
@@ -30,7 +30,7 @@ export async function saveCompletedReading(req: Request, res: Response) {
     }
 }
 
-export async function getCompletedReading(req: Request, res: Response) {
+export async function getCompletedReading(_: Request, res: Response) {
     try {
         const results = await Results.find();
         res.json(results);
