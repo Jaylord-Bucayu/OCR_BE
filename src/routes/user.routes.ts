@@ -1,6 +1,6 @@
 import { Application } from "express";
 
-import { editStudent,getStudentsList , getStudentById, getUsersList,createStudent, addStudentParticular } from "../controllers/user.controller";
+import { editStudent,getStudentsList , getStudentById, getUsersList,createStudent, addStudentParticular,createUserFromFile } from "../controllers/user.controller";
 import { getStudentFees } from '../controllers/fees.controller';
 
 export function UsersRoute(app: Application) {
@@ -22,11 +22,12 @@ export function UsersRoute(app: Application) {
      /**
       *create User *
       **/
-
+   
+      app.post('/import/students',createUserFromFile)
       app.post("/students/create",
       createStudent
       )
-
+    
 
       app.get("/students",
       getStudentsList)

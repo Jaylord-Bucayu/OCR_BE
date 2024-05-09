@@ -11,6 +11,7 @@ interface I extends Document {
   text?: string | null;
   audio?: string[];
   gender?:string | null;
+  code?: string | null;
   
   
 }
@@ -45,6 +46,11 @@ const bookSchema: Schema<I> = new Schema<I>(
     },
     audio:{
       type:[String]
+    },
+
+    code: {
+      type:String,
+      default:""
     }
 
 

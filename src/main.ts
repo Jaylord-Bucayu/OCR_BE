@@ -10,6 +10,7 @@ import { authRoutes } from "./routes/auth.routes"
 import { UsersRoute } from "./routes/user.routes";
 import { text2speechRoutes } from './routes/text2speech.routes'
 import {BooksRoutes} from "./routes/books.routes"
+import {ReadingRoute} from "./routes/results.routes"
 
 import initializeMongoose from './config/mongoose';
 import 'dotenv/config';
@@ -38,6 +39,7 @@ authRoutes(app);
 UsersRoute(app);
 text2speechRoutes(app);
 BooksRoutes(app);
+ReadingRoute(app)
 
 //@ts-ignoreconst fs = require('fs');
 // import fs from 'fs'

@@ -6,7 +6,7 @@ import { v2 as cloudinary } from 'cloudinary'
 
 import { AssemblyAI } from 'assemblyai'
 
-import {uploadImagesToCloudinary} from '../utils/index'
+import {uploadImagesToCloudinary,generateCode} from '../utils/index'
 const ElevenLabs = require("elevenlabs-node");
 //import { PassThrough } from 'stream';
 // import * as fs from 'fs-extra';
@@ -36,6 +36,8 @@ export async function createBook(req: Request, res: Response) {
     // Create a new book instance with data from the request body
     const data = req.body;
     const book = new Books(data);
+
+    book.code = generateCode(8);
 
     if (!Array.isArray(book.photos) || !Array.isArray(book.page)) {
       throw new Error('book.photos is not an array');

@@ -1,15 +1,17 @@
 
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
+import XLSX  from 'xlsx';
+import csv from 'csv-parser';
 
 //MODELS
 import User from '../models/user';
 import Auth from '../models/auth'
 import Fee from '../models/fees';
-
+import { UploadedFile } from 'express-fileupload';
 
 //UTILS
-// import { generateStudentId } from '../utils/index'
+ import { parseFile } from '../utils/index'
 
 export async function getStudentsList(_:Request, res: Response) {
  //const data = req.body;
@@ -95,6 +97,50 @@ export async function createUser(req:Request, res: Response) {
 
 }
 
+
+export async function createUserFromFile(req: Request, res: Response) {
+  try {
+      const files = req.files?.file as UploadedFile;
+      if (!files) {
+          return res.status(400).send('No file uploaded');
+      }
+
+      console.log({ files });
+
+      const fileList = Array.isArray(files) ? files : [files]; // Convert to array if it's not already
+
+      for (const file of fileList) {
+          const data: any = await parseFile(file);
+          for (const userData of data) {
+
+            console.log({userData})
+              // Assuming the structure of userData matches the expected format
+              const auth = new Auth({
+                  email: userData.email,
+                  mobile: userData.mobile,
+                  role: 'student',
+                  password: bcrypt.hashSync(userData.email, 10),
+              });
+              await auth.save();
+
+              const user = new User({
+                  _id: auth.id,
+                  firstname: userData.firstname,
+                  middlename: userData.middlename,
+                  lastname: userData.lastname
+              });
+              await user.save();
+          }
+      }
+
+      return res.send('Users created successfully');
+  } catch (error) {
+      console.error('Error creating users:', error);
+      return res.status(500).send('Internal Server Error');
+  }
+}
+
+
 export async function createStudent(req:Request, res: Response) {
   const data = req.body;
 
@@ -159,31 +205,30 @@ export async function createStudent(req:Request, res: Response) {
 
 }
 
-export async function editStudent(req:Request, res: Response) {
-  const data = req.body;
-  const params = req.params;
+export async function editStudent(req: Request, res: Response) {
+  try {
+      const data = req.body;
+      const params = req.params;
 
-  console.log({data,params})
-  
-   await User.findByIdAndUpdate(params.id, {
-    $set: {
-        ...data
-    },
-    }, { upsert: true });
+      console.log({ data, params });
 
+      // Update user information
+      await User.findByIdAndUpdate(params.id, { $set: { ...data } }, { upsert: true });
 
-    const auth = await Auth.findById(req.body.id);
-  
-    if(auth){
-      auth.mobile = data.mobile || '';
-      auth.email = data.email || '';
-      auth.save();
-    }
+      // Update authentication information if exists
+      const auth = await Auth.findById(data.id);
+      if (auth) {
+          auth.mobile = data.mobile || auth.mobile;
+          auth.email = data.email || auth.email;
+          await auth.save();
+      }
 
-    res.send('Profiled updated successfully');
-        
- 
- }
+      res.send('Profile updated successfully');
+  } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).send('Error updating profile');
+  }
+}
 
 export async function getUsersList(_:Request, res: Response) {
 

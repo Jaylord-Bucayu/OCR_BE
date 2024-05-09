@@ -14,6 +14,9 @@ import {
     deleteSingleBook
 } from "../controllers/books.controller";
 
+
+import { getAllEnrolledBooks,enrollBookWithCode } from "../controllers/enrolled.controller";
+
 export function BooksRoutes(app: Application) {
 
      /**
@@ -52,6 +55,10 @@ export function BooksRoutes(app: Application) {
 
     app.get("/book/subscription",userSubscription)
 
+
+    app.get("/books/enrolled",getAllEnrolledBooks)
+
+    app.post("/books/enrolled",enrollBookWithCode)
     
     
 }
