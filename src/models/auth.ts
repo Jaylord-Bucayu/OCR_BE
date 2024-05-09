@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 
-interface IAuth extends Document {
+export interface IAuth extends Document {
   userId?: string;
   email?: string;
   mobile?: string;

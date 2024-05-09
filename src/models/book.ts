@@ -12,6 +12,7 @@ interface I extends Document {
   audio?: string[];
   gender?:string | null;
   code?: string | null;
+  author: string | null;
   
   
 }
@@ -51,8 +52,12 @@ const bookSchema: Schema<I> = new Schema<I>(
     code: {
       type:String,
       default:""
-    }
+    },
 
+    author:{
+         type: Object,
+         ref:'User'
+    },
 
   },
   { timestamps: true }

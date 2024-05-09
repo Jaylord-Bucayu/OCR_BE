@@ -136,7 +136,7 @@ export async function createUserFromFile(req: Request, res: Response) {
       return res.send('Users created successfully');
   } catch (error) {
       console.error('Error creating users:', error);
-      return res.status(500).send('Internal Server Error');
+      return res.status(500).send({message:error.message});
   }
 }
 

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import Auth from '../models/auth'; // Adjust import based on your model location
+import Auth,{IAuth} from '../models/auth'; // Adjust import based on your model location
 import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 
@@ -7,20 +7,22 @@ dotenv.config();
 
 // Extend the Request type to include the 'auth' property
 interface CustomRequest extends Request {
-    auth?:  null; // Adjust the type accordingly based on your Auth model
+    auth?: IAuth | null; // Adjust the type accordingly based on your Auth model
 }
 
 const APP_KEY = process.env.APP_KEY || '';
 
-const middleware  = async (req: CustomRequest, res: Response, next: NextFunction) => {
+const middleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
         let token;
 
-        if (req?.cookies?.jwt) {
+        if (req.cookies?.jwt) {
             token = req.cookies.jwt;
         } else {
             token = (req.header('Authorization') || '').replace('Bearer ', '');
         }
+
+
 
         if (!token) {
             throw new Error('Access denied. No token provided.');
@@ -36,14 +38,11 @@ const middleware  = async (req: CustomRequest, res: Response, next: NextFunction
         auth.lastActive = new Date();
         await auth.save();
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
         req.auth = auth; // Assign the retrieved auth document to req.auth
 
         next();
     } catch (err) {
-
-      console.log(err)
+        console.error(err);
         // You may want to handle different error types separately
         return res.status(401).send('Access denied. Invalid token.');
     }

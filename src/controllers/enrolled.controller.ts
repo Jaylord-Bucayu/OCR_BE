@@ -17,7 +17,16 @@ export async function getAllEnrolledBooks(req: Request, res: Response) {
 
 export async function enrollBookWithCode(req: Request, res: Response) {
     try {
-        const { studentId, code } = req.body;
+        const { code } = req.body;
+
+
+        const customReq = req as any;
+
+        // Check if user information is attached to the request object
+        if (!customReq.auth || !customReq.auth.id) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        
 
         // Verify the code
         const isValidCode = await Book.findOne({ code });
@@ -26,14 +35,14 @@ export async function enrollBookWithCode(req: Request, res: Response) {
         }
 
         // Check if the student is already enrolled in the book
-        const existingEnrollment = await EnrolledBook.findOne({ studentId, bookId: isValidCode.id });
+        const existingEnrollment = await EnrolledBook.findOne({ studentId:customReq.auth.id, bookId: isValidCode.id });
         if (existingEnrollment) {
             return res.status(400).json({ message: 'Student already enrolled in this book' });
         }
 
         // Create a new enrollment
         const enrollment = new EnrolledBook({
-            studentId,
+            studentId:customReq.auth.id,
             bookId: isValidCode.id,
             enrollmentDate: new Date(),
             completionStatus: 'not_started' // Assuming the default completion status is 'not_started'

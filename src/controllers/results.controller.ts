@@ -78,3 +78,4 @@ export async function deleteCompletedReading(req: Request, res: Response) {
         res.status(500).send('Error deleting completed reading');
     }
 }
+
