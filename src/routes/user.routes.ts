@@ -23,8 +23,8 @@ export function UsersRoute(app: Application) {
       *create User *
       **/
    
-      app.post('/import/students',createUserFromFile)
-      
+      app.post('/import/file/students',createUserFromFile)
+
       app.post("/students/create",
       createStudent
       )
