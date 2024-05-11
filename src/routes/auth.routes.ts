@@ -19,6 +19,6 @@ app.post("/register",
 signUserUpWithEmailPassword
 );
 
-app.delete('/users/:userId',middleware, deleteUser);
+app.delete('/students/:userId',middleware, deleteUser);
     
 }
