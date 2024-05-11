@@ -105,7 +105,7 @@ export async function createUserFromFile(req: Request, res: Response) {
           return res.status(400).send('No file uploaded');
       }
 
-      console.log({ files });
+
 
       const fileList = Array.isArray(files) ? files : [files]; // Convert to array if it's not already
 
