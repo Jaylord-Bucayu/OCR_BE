@@ -2,6 +2,10 @@
 import { v2 as cloudinary } from 'cloudinary' 
 import multer from 'multer'
 import 'dotenv/config';
+//import fs from 'fs';
+import XLSX from 'xlsx';
+// import csv from 'csv-parser';
+// import { Readable } from 'stream';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -81,7 +85,7 @@ export function generateStudentId(): string {
   }
 
 
-  export function generateRandomFileName(length:number) {
+  export function generateRandomString(length:number) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomFileName = "";
     for (let i = 0; i < length; i++) {
@@ -89,7 +93,62 @@ export function generateStudentId(): string {
     }
     return randomFileName;
   }
-  
+
+//   interface RowData {
+//     email: string;
+//     mobile: string;
+//     firstname: string;
+//     middlename: string;
+//     lastname: string;
+//     // Add other fields as needed
+// }
+
+ export async function parseFile(file: Express.Multer.File) {
+
+  //@ts-ignore
+  const buffer:any = file?.data;
+  if (!buffer) {
+      throw new Error('File buffer not found');
+  }
+  const workbook = XLSX.read(buffer);
+    const sheet_name = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheet_name];
+
+    // Parse the entire sheet data
+    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    // Extract header and data rows
+    let header: string[] = [];
+    let rows: any[] = [];
+
+    if (data.length > 0) {
+        header = data[0] as string[];
+        rows = data.slice(1);
+    }
+
+    // Convert data to array of objects
+    const dataArray = rows.map(row => {
+        const rowData: { [key: string]: any } = {};
+        header.forEach((key, index) => {
+            rowData[key] = row[index];
+        });
+        return rowData;
+    });
+
+    return dataArray;
+}
+
+export function generateCode(length: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code = '';
+
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+  }
+
+  return code;
+}
 
 
  

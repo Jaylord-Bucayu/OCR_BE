@@ -1,5 +1,5 @@
 import { Application } from "express";
-
+import middleware from "../middleware/auth"
 import {
     createBook,
     getAllBook,
@@ -11,8 +11,12 @@ import {
     editSinglePage,
     addSinglePage,
     deleteSinglePage,
-    deleteSingleBook
+    deleteSingleBook,
+    getAllBooksPublishedByUser
 } from "../controllers/books.controller";
+
+
+import { getAllEnrolledBooks,enrollBookWithCode } from "../controllers/enrolled.controller";
 
 export function BooksRoutes(app: Application) {
 
@@ -24,7 +28,7 @@ export function BooksRoutes(app: Application) {
      getAllBook);
 
      
-    app.post("/book/create",
+    app.post("/book/create",middleware,
     createBook
     );
     
@@ -52,6 +56,15 @@ export function BooksRoutes(app: Application) {
 
     app.get("/book/subscription",userSubscription)
 
+
+    app.get("/books/enrolled",getAllEnrolledBooks)
+
+    app.post("/books/enrolled",middleware,enrollBookWithCode)
+
+
+    //teacher
+
+    app.get("/books/published", middleware, getAllBooksPublishedByUser)
     
     
 }

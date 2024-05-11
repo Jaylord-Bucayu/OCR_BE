@@ -160,3 +160,29 @@ export async function signUserUpWithEmailPassword(req: Request, res:Response) {
         },
     });
 }
+
+
+// Function to delete a user
+export async function deleteUser(req: Request, res: Response) {
+    try {
+        // Extract user ID from request parameters
+        const userId = req.params.userId;
+
+        // Delete the user by ID
+        await User.findByIdAndDelete(userId);
+        await Auth.findByIdAndDelete(userId);
+        
+        // Send success response
+        res.send({
+            status: 'success',
+            message: 'User deleted successfully',
+        });
+    } catch (error) {
+        // Handle errors
+        console.error('Error deleting user:', error);
+        res.status(500).send({
+            status: 'error',
+            message: 'Internal server error',
+        });
+    }
+}

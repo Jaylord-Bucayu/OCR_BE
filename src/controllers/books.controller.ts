@@ -6,7 +6,7 @@ import { v2 as cloudinary } from 'cloudinary'
 
 import { AssemblyAI } from 'assemblyai'
 
-import {uploadImagesToCloudinary} from '../utils/index'
+import {uploadImagesToCloudinary,generateCode} from '../utils/index'
 const ElevenLabs = require("elevenlabs-node");
 //import { PassThrough } from 'stream';
 // import * as fs from 'fs-extra';
@@ -30,12 +30,24 @@ export async function createBook(req: Request, res: Response) {
       return res.status(400).json({ error: 'Please upload at least one image' });
     }
 
+    const customReq = req as any;
+
+        // Check if user information is attached to the request object
+        if (!customReq.auth || !customReq.auth.id) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+
     // Upload images to Cloudinary
     const uploadedImagesUrls = await uploadImagesToCloudinary(req.files);
 
     // Create a new book instance with data from the request body
     const data = req.body;
     const book = new Books(data);
+
+    book.code = generateCode(8);
+
+    book.author = customReq.auth.id;
 
     if (!Array.isArray(book.photos) || !Array.isArray(book.page)) {
       throw new Error('book.photos is not an array');
@@ -625,5 +637,24 @@ export async function addSinglePage(req: Request, res: Response) {
   } catch (error) {
     console.error('Error adding pages:', error);
     res.status(500).send({ error: 'Internal server error' });
+  }
+}
+
+
+//teacher
+export async function getAllBooksPublishedByUser(req: Request, res: Response) {
+  try {
+    
+    const customReq = req as any;
+
+    // Check if user information is attached to the request object
+ 
+      // Fetch all books published by the user
+      const publishedBooks = await Books.find({ author: customReq?.auth.id });
+
+      res.json(publishedBooks);
+  } catch (error) {
+      console.error('Error fetching books published by user:', error);
+      res.status(500).send('Error fetching books published by user');
   }
 }
