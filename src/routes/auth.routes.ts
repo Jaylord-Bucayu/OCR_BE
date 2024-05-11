@@ -2,7 +2,8 @@ import { Application } from "express";
 
 import {
     signUserInWithEmailPassword ,signUserUpWithEmailPassword
-} from "../controllers/auth.controller";
+,deleteUser} from "../controllers/auth.controller";
+import middleware from "../middleware/auth";
 
 export function authRoutes(app: Application) {
 
@@ -18,5 +19,6 @@ app.post("/register",
 signUserUpWithEmailPassword
 );
 
+app.delete('/users/:userId',middleware, deleteUser);
     
 }
