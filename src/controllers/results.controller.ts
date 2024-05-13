@@ -93,3 +93,19 @@ export async function deleteCompletedReading(req: Request, res: Response) {
     }
 }
 
+
+
+//student
+export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
+    try {
+        const { bookId } = req.body;
+  
+        // Get the enrolled books for the student
+        const enrolledBooks = await Results.find({ bookId }).populate('bookId').populate('studentId');
+  
+        res.status(200).json(enrolledBooks);
+    } catch (error) {
+        console.error('Error fetching enrolled books:', error);
+        res.status(500).send('Error fetching enrolled books');
+    }
+  }

@@ -62,7 +62,7 @@ const bookSchema: Schema<I> = new Schema<I>(
     },
     isPublic:{
       type:Boolean,
-      default:true
+      default:false
     },
     attempt:{
       type:Number

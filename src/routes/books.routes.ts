@@ -12,7 +12,8 @@ import {
     addSinglePage,
     deleteSinglePage,
     deleteSingleBook,
-    getAllBooksPublishedByUser
+    getAllBooksPublishedByUser,
+
 } from "../controllers/books.controller";
 
 
@@ -65,6 +66,8 @@ export function BooksRoutes(app: Application) {
     //teacher
 
     app.get("/books/published", middleware, getAllBooksPublishedByUser)
+
+    
     
     
 }

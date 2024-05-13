@@ -14,6 +14,8 @@ import axios from 'axios';
 // import path from 'path'
 import { createWorker } from 'tesseract.js';
 
+import Results from "../models/results";
+
 
 // Configure Cloudinary
 cloudinary.config({
@@ -659,3 +661,5 @@ export async function getAllBooksPublishedByUser(req: Request, res: Response) {
       res.status(500).send('Error fetching books published by user');
   }
 }
+
+

@@ -23,7 +23,7 @@ const resultsSchema = new mongoose.Schema({
     },
     bookId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Book', // Reference to the Book model
+        ref: 'Books', // Reference to the Book model
         required: true
     },
     attempts: [attemptSchema]
