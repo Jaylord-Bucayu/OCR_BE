@@ -13,11 +13,12 @@ import {
     deleteSinglePage,
     deleteSingleBook,
     getAllBooksPublishedByUser,
+    
 
 } from "../controllers/books.controller";
 
 
-import { getAllEnrolledBooks,enrollBookWithCode } from "../controllers/enrolled.controller";
+import { getAllEnrolledBooks,enrollBookWithCode,unenrollBook ,getStudentEnrolledBook} from "../controllers/enrolled.controller";
 
 export function BooksRoutes(app: Application) {
 
@@ -66,6 +67,10 @@ export function BooksRoutes(app: Application) {
     //teacher
 
     app.get("/books/published", middleware, getAllBooksPublishedByUser)
+
+    //students
+    app.post("/books/unenroll", unenrollBook)
+    app.get("/books/students/attempts",middleware,getStudentEnrolledBook)
 
     
     

@@ -3,11 +3,12 @@ const mongoose = require('mongoose');
 const attemptSchema = new mongoose.Schema({
     score: {
         type: Number,
-        required: true
+        required: true,
+        default:0
     },
     timeSpent: {
         type: Number,
-        required: true // Time spent in seconds
+      
     },
     date: {
         type: Date,
@@ -26,7 +27,11 @@ const resultsSchema = new mongoose.Schema({
         ref: 'Books', // Reference to the Book model
         required: true
     },
-    attempts: [attemptSchema]
+    attempts: [attemptSchema],
+    final_score:{
+        type: Number,
+        default:0
+    }
 });
 
 const Results = mongoose.model('Results', resultsSchema);
