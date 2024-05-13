@@ -109,3 +109,21 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
         res.status(500).send('Error fetching enrolled books');
     }
   }
+
+
+  export async function scoreReading(req: Request, res: Response){
+    try {
+        const {score} = req.body;
+
+        if(!score) return res.status(404).send({message:"Please indicate the score"});
+        
+        const result = await Results.findByIdAndUpdate(req.params.id, {score}, { new: true });
+        if (!result) {
+            return res.status(404).send('Reading result not found');
+        }
+        res.json(result);
+    } catch (error) {
+        console.error('Error updating completed reading:', error);
+        res.status(500).send('Error updating completed reading');
+    }
+  }
