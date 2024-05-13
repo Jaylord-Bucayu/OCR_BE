@@ -13,7 +13,8 @@ interface I extends Document {
   gender?:string | null;
   code?: string | null;
   author: string | null;
-  isPublic?: Boolean
+  isPublic?: Boolean,
+  attempt?: Number | 0;
   
   
 }
@@ -62,6 +63,9 @@ const bookSchema: Schema<I> = new Schema<I>(
     isPublic:{
       type:Boolean,
       default:true
+    },
+    attempt:{
+      type:Number
     }
 
   },

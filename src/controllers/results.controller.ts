@@ -1,34 +1,48 @@
 import { Request, Response } from "express";
 import Results from '../models/results'; // Import the Results model
 // import User from '../models/user';
+import Books from '../models/book';
 
 export async function saveCompletedReading(req: Request, res: Response) {
     try {
         const { studentId, bookId, score, timeSpent } = req.body;
-        
-        // Find the result for this student and book
-        let result = await Results.findOne({ studentId, bookId });
 
-        if (result) {
-            // If a result exists, add a new attempt
-            result.attempts.push({ score, timeSpent, date: Date.now() });
-        } else {
-            // If no result exists, create a new one with the attempt
-            result = new Results({
-                studentId,
-                bookId,
-                attempts: [{ score, timeSpent, date: Date.now() }]
-            });
+        // Check if the book exists
+        const book = await Books.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ message: "Book not found" });
         }
 
-        await result.save();
+        // Check if the attempt limit has been reached
+        if (book.attempt !== undefined) {
+            const result = await Results.findOne({ studentId, bookId });
+            if (result) {
+                if (result.attempts.length >= book.attempt) {
+                    return res.status(400).json({ message: "Your attempt limit has been reached" });
+                }
+                // If a result exists, add a new attempt
+                result.attempts.push({ score, timeSpent, date: Date.now() });
+            } else {
+                // If no result exists, create a new one with the attempt
+                const newResult = new Results({
+                    studentId,
+                    bookId,
+                    attempts: [{ score, timeSpent, date: Date.now() }]
+                });
+                await newResult.save();
+            }
 
-        res.status(201).json(result);
+            await result.save();
+            res.status(201).json(result);
+        } else {
+            return res.status(500).json({ message: "Attempt limit is not defined for this book" });
+        }
     } catch (error) {
         console.error('Error saving completed reading:', error);
         res.status(500).send('Error saving completed reading');
     }
 }
+
 
 export async function getCompletedReading(_: Request, res: Response) {
     try {

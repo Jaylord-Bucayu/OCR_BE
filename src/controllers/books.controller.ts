@@ -48,6 +48,7 @@ export async function createBook(req: Request, res: Response) {
     book.code = generateCode(8);
 
     book.author = customReq.auth.id;
+    book.attempt =  data.attempt;
 
     if (!Array.isArray(book.photos) || !Array.isArray(book.page)) {
       throw new Error('book.photos is not an array');
