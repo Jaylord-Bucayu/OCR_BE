@@ -14,7 +14,7 @@ import axios from 'axios';
 // import path from 'path'
 import { createWorker } from 'tesseract.js';
 
-import Results from "../models/results";
+
 
 
 // Configure Cloudinary
