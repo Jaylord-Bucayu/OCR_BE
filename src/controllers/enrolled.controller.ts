@@ -64,10 +64,23 @@ export async function enrollBookWithCode(req: Request, res: Response) {
 
 export async function unenrollBook(req: Request, res: Response) {
   try {
-    const { studentId, bookId } = req.body;
+    const {  code } = req.body;
+
+
+    const isValidCode = await Book.findOne({ code });
+    if (!isValidCode) {
+      return res.status(401).json({ message: "The course code is not valid" });
+    }
+
+    const customReq = req as any;
+
+    // Check if user information is attached to the request object
+    if (!customReq.auth || !customReq.auth.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     // Find the enrollment record
-    const enrollment = await EnrolledBook.findOne({ studentId, bookId });
+    const enrollment = await EnrolledBook.findOne({ studentId: customReq.auth.id, bookId:isValidCode.id });
 
     if (!enrollment) {
       return res.status(404).json({ message: "Enrollment record not found" });

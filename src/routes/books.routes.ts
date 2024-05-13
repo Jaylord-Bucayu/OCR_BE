@@ -69,7 +69,7 @@ export function BooksRoutes(app: Application) {
     app.get("/books/published", middleware, getAllBooksPublishedByUser)
 
     //students
-    app.post("/books/unenroll", unenrollBook)
+    app.post("/books/unenroll", middleware,unenrollBook)
     app.get("/books/students/attempts",middleware,getStudentEnrolledBook)
 
     
