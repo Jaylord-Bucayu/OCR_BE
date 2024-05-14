@@ -5,10 +5,19 @@ import Results from "../models/results";
 
 export async function getAllEnrolledBooks(req: Request, res: Response) {
   try {
+
+    const { id } = req.body;
+
+    const studentId = id;
+
     // Fetch all enrolled books for the given studentId
-    const enrolledBooks = await EnrolledBook.find({ studentId: req.body.id })
-      .populate("bookId")
-      .populate("studentId");
+    const enrolledBooks = await EnrolledBook.find({ studentId })
+    .populate({
+        path: 'bookId',
+        match: { isPublic: true }, // Filter books where isPublic is true
+    })
+    .populate('studentId');
+
     res.json(enrolledBooks);
   } catch (error) {
     console.error("Error fetching enrolled books:", error);
