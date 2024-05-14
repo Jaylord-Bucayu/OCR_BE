@@ -122,6 +122,55 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     }
   }
 
+  //get books attempt per student 
+
+  export async function getStudentsAttemptsPerBook(req: Request, res: Response) {
+    try {
+        const { bookId, studentId } = req.body;
+        const { page } = req.query;
+
+        const books = await Books.findById(bookId);
+
+        if (!books || !books.isPublic) {
+            return res.status(404).send({ message: "Book not found" });
+        }
+
+        const enrolledBooks = await Results.findOne({ bookId, studentId });
+
+        if (!enrolledBooks || !enrolledBooks.attempts || enrolledBooks.attempts.length === 0) {
+            return res.status(404).send({ message: "Attempts not found" });
+        }
+
+        if (!page) {
+            return res.status(200).json(enrolledBooks); // Return all attempts if page is not provided
+        }
+
+        let attemptIndex: number;
+
+        if (typeof page === 'string') {
+            attemptIndex = parseInt(page) - 1;
+        } else {
+            return res.status(404).send({ message: "Page not found" });
+        }
+
+        if (isNaN(attemptIndex) || attemptIndex < 0 || attemptIndex >= enrolledBooks.attempts.length) {
+            return res.status(400).send({ message: "Invalid attempt number" });
+        }
+
+        const attempt = {
+            final_score:enrolledBooks.final_score,
+            bookId:enrolledBooks.bookId,
+            _id:enrolledBooks.id,
+            studentId:enrolledBooks.studentId,
+            attempts:enrolledBooks.attempts[attemptIndex]
+        }
+
+        res.status(200).json(attempt);
+    } catch (error) {
+        console.error('Error fetching enrolled books:', error);
+        res.status(500).send('Error fetching enrolled books');
+    }
+}
 
   export async function scoreReading(req: Request, res: Response){
     try {

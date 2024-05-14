@@ -126,6 +126,7 @@ export async function createUserFromFile(req: Request, res: Response) {
                   firstname: userData.firstname,
                   middlename: userData.middlename,
                   lastname: userData.lastname,
+                  email: userData.email,
                   data: {
                     student_id : userData.student_id
                   }

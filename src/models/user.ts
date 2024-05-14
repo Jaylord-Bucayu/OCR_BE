@@ -13,7 +13,7 @@ interface IUser extends Document {
   studentId?:string | null;
   data?: Map<string, string | number | boolean | null>;
   parent?: Map<string, string | number | boolean | null>;
-  
+  email?: string | null;
 }
 
 const userSchema: Schema<IUser> = new Schema<IUser>(
@@ -64,6 +64,10 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
     parent: {
       type: Object,
       ref: 'User'
+    },
+    email: {
+      type: String,
+      default: null,
     },
 
   },

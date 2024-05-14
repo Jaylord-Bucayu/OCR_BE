@@ -141,6 +141,7 @@ export async function signUserUpWithEmailPassword(req: Request, res:Response) {
 
    user.firstname = data.firstname,
     user.lastname = data.lastname;
+    user.email = date.email;
   await user.save();
    //var user = await User.findByIdAndUpdate(auth.id, {}, { new: true, upsert: true });
 
