@@ -99,6 +99,12 @@ export async function deleteCompletedReading(req: Request, res: Response) {
 export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     try {
         const { bookId } = req.body;
+
+
+        const books = await Books.findById(bookId);
+        
+        if(!books || !books.isPublic) return res.status(500).send({message:"Book not found"});
+       
   
         // Get the enrolled books for the student
         const enrolledBooks = await Results.find({ bookId }).populate('bookId').populate('studentId');
