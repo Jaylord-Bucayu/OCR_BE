@@ -174,11 +174,11 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
 
   export async function scoreReading(req: Request, res: Response){
     try {
-        const {score} = req.body;
+        const {final_score} = req.body;
 
-        if(!score) return res.status(404).send({message:"Please indicate the score"});
+        if(!final_score) return res.status(404).send({message:"Please indicate the score"});
         
-        const result = await Results.findByIdAndUpdate(req.params.id, {final_score:score}, { new: true });
+        const result = await Results.findByIdAndUpdate(req.params.id, {final_score}, { new: true });
         if (!result) {
             return res.status(404).send('Reading result not found');
         }
