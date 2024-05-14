@@ -8,6 +8,7 @@ import {
   getAllStudentEnrolledBooks,
   scoreReading,
 } from "../controllers/results.controller";
+import middleware from "../middleware/auth";
 
 export function ReadingRoute(app: Application) {
   /**
@@ -35,7 +36,7 @@ export function ReadingRoute(app: Application) {
    **/
   app.post("/readings", saveCompletedReading);
 
-  app.post("/books/students/enrolled", getAllStudentEnrolledBooks);
+  app.post("/books/students/enrolled",middleware, getAllStudentEnrolledBooks);
 
   app.post("/books/student/score/:id", scoreReading)
 

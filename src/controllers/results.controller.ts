@@ -100,6 +100,12 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     try {
         const { bookId } = req.body;
 
+        const customReq = req as any;
+
+        // Check if user information is attached to the request object
+        if (!customReq.auth || !customReq.auth.id) {
+          return res.status(401).json({ message: "Unauthorized" });
+        }
 
         const books = await Books.findById(bookId);
         
