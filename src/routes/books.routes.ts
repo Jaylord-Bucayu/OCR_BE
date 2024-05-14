@@ -59,7 +59,7 @@ export function BooksRoutes(app: Application) {
     app.get("/book/subscription",userSubscription)
 
 
-    app.get("/books/enrolled",getAllEnrolledBooks)
+    app.post("/books/get/enrolled",getAllEnrolledBooks)
 
     app.post("/books/enrolled",middleware,enrollBookWithCode)
 
@@ -70,7 +70,7 @@ export function BooksRoutes(app: Application) {
 
     //students
     app.post("/books/unenroll", middleware,unenrollBook)
-    app.get("/books/students/attempts",middleware,getStudentEnrolledBook)
+    app.post("/books/students/attempts",middleware,getStudentEnrolledBook)
 
     
     

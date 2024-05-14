@@ -35,7 +35,7 @@ export function ReadingRoute(app: Application) {
    **/
   app.post("/readings", saveCompletedReading);
 
-  app.get("/books/students/enrolled", getAllStudentEnrolledBooks);
+  app.post("/books/students/enrolled", getAllStudentEnrolledBooks);
 
   app.post("/books/student/score/:id", scoreReading)
 
