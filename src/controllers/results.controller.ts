@@ -22,6 +22,10 @@ export async function saveCompletedReading(req: Request, res: Response) {
                 }
                 // If a result exists, add a new attempt
                 result.attempts.push({ score, timeSpent, date: Date.now() });
+
+                await result.save();
+
+
             } else {
                 // If no result exists, create a new one with the attempt
                 const newResult = new Results({
@@ -30,9 +34,11 @@ export async function saveCompletedReading(req: Request, res: Response) {
                     attempts: [{ score, timeSpent, date: Date.now() }]
                 });
                 await newResult.save();
+
+               return res.status(201).json(newResult);
             }
 
-            await result.save();
+          
             res.status(201).json(result);
         } else {
             return res.status(500).json({ message: "Attempt limit is not defined for this book" });
