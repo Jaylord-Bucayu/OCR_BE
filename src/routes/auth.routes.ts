@@ -2,7 +2,7 @@ import { Application } from "express";
 
 import {
     signUserInWithEmailPassword ,signUserUpWithEmailPassword
-,deleteUser} from "../controllers/auth.controller";
+,deleteUser, resetPassword} from "../controllers/auth.controller";
 import middleware from "../middleware/auth";
 
 export function authRoutes(app: Application) {
@@ -20,5 +20,7 @@ signUserUpWithEmailPassword
 );
 
 app.delete('/students/:userId',middleware, deleteUser);
-    
+
+
+app.patch('/reset-password',resetPassword)
 }

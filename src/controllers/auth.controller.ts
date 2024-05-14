@@ -161,6 +161,42 @@ export async function signUserUpWithEmailPassword(req: Request, res:Response) {
     });
 }
 
+export async function resetPassword(req: Request, res: Response) {
+    const {  userId,newPassword } = req.body;
+
+    try {
+        
+    
+
+        // Find the user by ID
+        const user = await Auth.findById(userId);
+        if (!user) {
+            return res.status(404).send({
+                status: 'error',
+                message: 'User not found',
+            });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the user's password
+        user.password = hashedPassword;
+        await user.save();
+
+        // Send success response
+        res.send({
+            status: 'success',
+            message: 'Password reset successfully',
+        });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).send({
+            status: 'error',
+            message: 'Invalid or expired token',
+        });
+    }
+}
 
 // Function to delete a user
 export async function deleteUser(req: Request, res: Response) {
@@ -169,9 +205,16 @@ export async function deleteUser(req: Request, res: Response) {
         const userId = req.params.userId;
 
         // Delete the user by ID
-        await User.findByIdAndDelete(userId);
-        await Auth.findByIdAndDelete(userId);
-        
+        const user = await User.findByIdAndDelete(userId);
+        const auth = await Auth.findByIdAndDelete(userId);
+
+        if (!user && !auth) {
+            return res.status(404).send({
+                status: 'error',
+                message: 'User not found',
+            });
+        }
+
         // Send success response
         res.send({
             status: 'success',

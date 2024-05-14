@@ -6,7 +6,7 @@ import {
   updateCompletedReading,
   deleteCompletedReading,
   getAllStudentEnrolledBooks,
-  scoreReading
+  scoreReading,
 } from "../controllers/results.controller";
 
 export function ReadingRoute(app: Application) {
@@ -38,4 +38,6 @@ export function ReadingRoute(app: Application) {
   app.get("/books/students/enrolled", getAllStudentEnrolledBooks);
 
   app.post("/books/student/score/:id", scoreReading)
+
+ 
 }

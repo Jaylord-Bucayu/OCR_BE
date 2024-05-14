@@ -117,7 +117,7 @@ export async function createUserFromFile(req: Request, res: Response) {
                   email: userData.email,
                   mobile: userData.mobile,
                   role: 'student',
-                  password: bcrypt.hashSync(userData.email, 10),
+                  password: bcrypt.hashSync(userData.student_id.toString(), 10),
               });
               await auth.save();
 
@@ -125,7 +125,10 @@ export async function createUserFromFile(req: Request, res: Response) {
                   _id: auth.id,
                   firstname: userData.firstname,
                   middlename: userData.middlename,
-                  lastname: userData.lastname
+                  lastname: userData.lastname,
+                  data: {
+                    student_id : userData.student_id
+                  }
               });
               await user.save();
           }
