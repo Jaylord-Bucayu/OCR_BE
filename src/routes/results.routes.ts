@@ -38,7 +38,7 @@ export function ReadingRoute(app: Application) {
 
   app.post("/books/students/enrolled",middleware, getAllStudentEnrolledBooks);
 
-  app.post("/books/student/score/:id", scoreReading)
+  app.post("/books/student/score", scoreReading)
 
  
 }
