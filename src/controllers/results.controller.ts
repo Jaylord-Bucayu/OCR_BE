@@ -192,6 +192,7 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
         }
 
         result.final_score = final_score;
+        await result.save();
         res.json(result);
     } catch (error) {
         console.error('Error updating completed reading:', error);
