@@ -176,7 +176,9 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     try {
         const {final_score} = req.body;
 
-        if(!final_score) return res.status(404).send({message:"Please indicate the score"});
+        console.log({final_score})
+
+        if(final_score == undefined || final_score == null) return res.status(404).send({message:"Please indicate the score"});
         
         const result = await Results.findByIdAndUpdate(req.params.id, {final_score}, { new: true });
         if (!result) {
