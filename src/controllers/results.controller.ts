@@ -180,16 +180,18 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
 
   export async function scoreReading(req: Request, res: Response){
     try {
-        const {final_score} = req.body;
+        const {final_score,studentId,bookId} = req.body;
 
         console.log({final_score})
 
         if(final_score == undefined || final_score == null) return res.status(404).send({message:"Please indicate the score"});
         
-        const result = await Results.findByIdAndUpdate(req.params.id, {final_score}, { new: true });
+        const result = await Results.findOne({studentId,bookId});
         if (!result) {
             return res.status(404).send('Reading result not found');
         }
+
+        result.final_score = final_score;
         res.json(result);
     } catch (error) {
         console.error('Error updating completed reading:', error);
