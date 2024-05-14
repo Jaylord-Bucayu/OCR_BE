@@ -182,7 +182,7 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     try {
         const {final_score,studentId,bookId} = req.body;
 
-        console.log({final_score})
+ 
 
         if(final_score == undefined || final_score == null) return res.status(404).send({message:"Please indicate the score"});
         
