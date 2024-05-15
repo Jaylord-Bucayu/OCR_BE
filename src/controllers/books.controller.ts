@@ -270,7 +270,6 @@ export async function getSingleBookPage(req: Request, res: Response) {
 
   const pageData:any = page.page || undefined;
 
-  console.log(audioIndex)
   const single_page = {
       timestamp: page.timestamp?.[audioIndex],
       title: page.title,

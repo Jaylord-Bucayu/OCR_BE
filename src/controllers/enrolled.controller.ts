@@ -105,6 +105,37 @@ export async function unenrollBook(req: Request, res: Response) {
   }
 }
 
+
+//unenroll a student 
+export async function unenrollAStudent(req: Request, res: Response) {
+  try {
+    const {  code,studentId } = req.body;
+
+
+    const isValidCode = await Book.findOne({ code });
+    if (!isValidCode) {
+      return res.status(401).json({ message: "The course code is not valid" });
+    }
+
+  
+
+    // Find the enrollment record
+    const enrollment = await EnrolledBook.findOne({ studentId, bookId:isValidCode.id });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: "Enrollment record not found" });
+    }
+
+    // Delete the enrollment record
+    await enrollment.deleteOne();
+
+    res.status(200).json({ message: "Successfully unenrolled from the book" });
+  } catch (error) {
+    console.error("Error unenrolling from the book:", error);
+    res.status(500).send("Error unenrolling from the book");
+  }
+}
+
 export async function getStudentEnrolledBook(req: Request, res: Response) {
   try {
     const { bookId } = req.body;

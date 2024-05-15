@@ -57,7 +57,10 @@ export async function createUser(req:Request, res: Response) {
             _id: auth.id,
             firstname: data.firstname,
             middlename: data.middlename,
-            lastname: data.lastname
+            lastname: data.lastname,
+            data: {
+              student_id:data.studentId
+            }
         });
 
         await user.save();
