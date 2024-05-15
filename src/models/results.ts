@@ -19,7 +19,7 @@ const attemptSchema = new mongoose.Schema({
 const resultsSchema = new mongoose.Schema({
     studentId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model assuming 'User' is your student model
+        ref: 'User', // Ensure 'User' matches the model name exactly
         required: true
     },
     bookId: {

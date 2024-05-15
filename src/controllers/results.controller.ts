@@ -101,33 +101,38 @@ export async function deleteCompletedReading(req: Request, res: Response) {
 
 
 
-//student
 export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
     try {
         const { bookId } = req.body;
 
-        // const customReq = req as any;
+        if (!bookId) {
+            return res.status(400).json({ message: "Book ID is required" });
+        }
 
-        // // Check if user information is attached to the request object
-        // if (!customReq.auth || !customReq.auth.id) {
-        //   return res.status(401).json({ message: "Unauthorized" });
-        // }
+        const book = await Books.findById(bookId);
+        if (!book || !book.isPublic) {
+            return res.status(404).json({ message: "Book not found or is not public" });
+        }
 
-        const books = await Books.findById(bookId);
-        
-        if(!books || !books.isPublic) return res.status(500).send({message:"Book not found"});
-       
-  
-        // Get the enrolled books for the student
-        const enrolledBooks = await Results.find({ bookId }).populate('bookId').populate('studentId');
-  
+        const results = await Results.find({ bookId })
+            .populate('studentId')
+            .populate('bookId');
+
+        console.log('Results after population:', results);
+
+        // Filter out results where studentId is null
+        const enrolledBooks = results.filter((result:any) => result.studentId !== null);
+
+        if (!enrolledBooks.length) {
+            return res.status(404).json({ message: "No enrolled students found for this book" });
+        }
+
         res.status(200).json(enrolledBooks);
     } catch (error) {
         console.error('Error fetching enrolled books:', error);
-        res.status(500).send('Error fetching enrolled books');
+        res.status(500).send({ message: 'Error fetching enrolled books' });
     }
-  }
-
+}
   //get books attempt per student 
 
   export async function getStudentsAttemptsPerBook(req: Request, res: Response) {
