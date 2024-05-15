@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Results from '../models/results'; // Import the Results model
 // import User from '../models/user';
 import Books from '../models/book';
+import EnrolledBook from '../models/enrolled';
 
 export async function saveCompletedReading(req: Request, res: Response) {
     try {
@@ -114,20 +115,16 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
             return res.status(404).json({ message: "Book not found or is not public" });
         }
 
-        const results = await Results.find({ bookId })
+        const results = await EnrolledBook.find({ bookId })
             .populate('studentId')
             .populate('bookId');
 
         console.log('Results after population:', results);
 
         // Filter out results where studentId is null
-        const enrolledBooks = results.filter((result:any) => result.studentId !== null);
+       
 
-        if (!enrolledBooks.length) {
-            return res.status(404).json({ message: "No enrolled students found for this book" });
-        }
-
-        res.status(200).json(enrolledBooks);
+        res.status(200).json(results);
     } catch (error) {
         console.error('Error fetching enrolled books:', error);
         res.status(500).send({ message: 'Error fetching enrolled books' });
