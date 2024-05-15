@@ -18,7 +18,7 @@ import {
 } from "../controllers/books.controller";
 
 
-import { getAllEnrolledBooks,enrollBookWithCode,unenrollBook ,getStudentEnrolledBook,unenrollAStudent} from "../controllers/enrolled.controller";
+import { getAllEnrolledBooks,enrollBookWithCode,unenrollBook ,getStudentEnrolledBook,unenrollAStudent,getStudentAllEnrolledBook} from "../controllers/enrolled.controller";
 
 import {getStudentsAttemptsPerBook} from "../controllers/results.controller"
 
@@ -75,6 +75,8 @@ export function BooksRoutes(app: Application) {
     //students
     app.post("/books/unenroll", middleware,unenrollBook)
     app.post("/books/students/attempts",middleware,getStudentEnrolledBook)
+
+    app.post("/books/all/attempts",middleware,getStudentAllEnrolledBook)
 
     app.post("/books/per-student/attempts",middleware,getStudentsAttemptsPerBook)
     

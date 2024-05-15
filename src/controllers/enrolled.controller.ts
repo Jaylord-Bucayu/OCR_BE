@@ -161,3 +161,29 @@ export async function getStudentEnrolledBook(req: Request, res: Response) {
 }
 
 
+export async function getStudentAllEnrolledBook(req: Request, res: Response) {
+  try {
+    const { bookId } = req.body;
+
+    const customReq = req as any;
+
+    // Check if user information is attached to the request object
+    if (!customReq.auth || !customReq.auth.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  
+    const existingEnrollment = await Results.findOne({
+      
+      bookId,
+    }).populate("studentId");
+
+    console.log(customReq.auth.id)
+    res.status(200).json(existingEnrollment);
+  } catch (error) {
+    console.error("Error fetching the book:", error);
+    res.status(500).send("Error fetching the book");
+  }
+}
+
+
+
