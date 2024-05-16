@@ -172,7 +172,7 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
       return res.status(401).json({ message: "Unauthorized" });
     }
   
-    const existingEnrollment = await Results.findOne({
+    const existingEnrollment = await Results.find({
       
       bookId,
     }).populate("studentId");
