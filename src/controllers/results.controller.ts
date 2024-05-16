@@ -6,7 +6,7 @@ import EnrolledBook from '../models/enrolled';
 
 export async function saveCompletedReading(req: Request, res: Response) {
     try {
-        const { studentId, bookId, score, timeSpent } = req.body;
+        const { studentId, bookId, score, timeSpent,pauses } = req.body;
 
         // Check if the book exists
         const book = await Books.findById(bookId);
@@ -22,7 +22,7 @@ export async function saveCompletedReading(req: Request, res: Response) {
                     return res.status(400).json({ message: "Your attempt limit has been reached" });
                 }
                 // If a result exists, add a new attempt
-                result.attempts.push({ score, timeSpent, date: Date.now() });
+                result.attempts.push({ score, timeSpent, date: Date.now(), pauses });
 
                 await result.save();
 

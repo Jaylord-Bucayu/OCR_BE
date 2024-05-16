@@ -13,6 +13,10 @@ const attemptSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    pauses: {
+        type:[Number],
+        default:[]
     }
 });
 
