@@ -18,7 +18,9 @@ export async function getAllEnrolledBooks(req: Request, res: Response) {
     })
     .populate('studentId');
 
-    res.json(enrolledBooks);
+    const filteredEnrolledBooks = enrolledBooks.filter(item => item.bookId !== null);
+
+    res.json(filteredEnrolledBooks);
   } catch (error) {
     console.error("Error fetching enrolled books:", error);
     res.status(500).send("Error fetching enrolled books");
