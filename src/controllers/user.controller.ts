@@ -58,7 +58,7 @@ export async function createUser(req:Request, res: Response) {
             firstname: data.firstname,
             middlename: data.middlename,
             lastname: data.lastname,
-            data: {
+            data : {
               student_id:data.studentId
             }
         });
@@ -80,7 +80,11 @@ export async function createUser(req:Request, res: Response) {
             _id: auth.id,
             firstname: data.parent.firstname,
             middlename: data.parent.middlename,
-            lastname: data.parent.lastname
+            lastname: data.parent.lastname,
+            data: {
+              student_id : data.student_id,
+              section: data.section
+            }
         });
 
         await parent_user.save();
@@ -113,17 +117,29 @@ export async function createUserFromFile(req: Request, res: Response) {
       for (const file of fileList) {
           const data: any = await parseFile(file);
           for (const userData of data) {
+              // Check if user with the provided email or mobile already exists
+              const existingAuth = await Auth.findOne({ $or: [{ email: userData.email }, { mobile: userData.mobile }] });
+              if (existingAuth) {
+                  console.log(`User with email ${userData.email} or mobile ${userData.mobile} already exists. Skipping creation.`);
+                  continue; // Skip creating user and auth records
+              }
 
-            console.log({userData})
-              // Assuming the structure of userData matches the expected format
+              // Ensure userData.student_id is defined before calling toString()
+              const studentId = userData.student_id ? userData.student_id.toString() : '';
+
+              // Hash the password
+              const hashedPassword = bcrypt.hashSync(studentId, 10);
+
+              // Create auth record
               const auth = new Auth({
                   email: userData.email,
                   mobile: userData.mobile,
                   role: 'student',
-                  password: bcrypt.hashSync(userData.student_id.toString(), 10),
+                  password: hashedPassword,
               });
               await auth.save();
 
+              // Create user record
               const user = new User({
                   _id: auth.id,
                   firstname: userData.firstname,
@@ -131,7 +147,8 @@ export async function createUserFromFile(req: Request, res: Response) {
                   lastname: userData.lastname,
                   email: userData.email,
                   data: {
-                    student_id : userData.student_id
+                      student_id: studentId,
+                      section: userData.section
                   }
               });
               await user.save();
@@ -141,9 +158,34 @@ export async function createUserFromFile(req: Request, res: Response) {
       return res.send('Users created successfully');
   } catch (error) {
       console.error('Error creating users:', error);
-      return res.status(500).send({message:error.message});
+      return res.status(500).send({ message: error.message });
   }
 }
+
+
+
+export async function deleteAuths(req: Request, res: Response) {
+  try {
+      const { ids } = req.body;
+
+      // Delete auth records matching the given IDs
+      const authResult = await Auth.deleteMany({ _id: { $in: ids } });
+      const userResult = await User.deleteMany({ _id: { $in: ids } });
+
+      // Check if any records were deleted
+      if (authResult.deletedCount === 0 && userResult.deletedCount === 0) {
+          return res.status(404).json({ message: "No records found to delete" });
+      }
+
+      // Return success response
+      return res.status(200).json({ message: "Auth and User records deleted successfully" });
+
+  } catch (err) {
+      console.error('Error deleting auths:', err);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 
 
 export async function createStudent(req:Request, res: Response) {

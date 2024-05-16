@@ -1,7 +1,8 @@
 import { Application } from "express";
 
-import { editStudent,getStudentsList , getStudentById, getUsersList,createStudent, addStudentParticular,createUserFromFile } from "../controllers/user.controller";
+import { editStudent,getStudentsList , getStudentById, getUsersList,createStudent, addStudentParticular,createUserFromFile,deleteAuths } from "../controllers/user.controller";
 import { getStudentFees } from '../controllers/fees.controller';
+import middleware from "../middleware/auth";
 
 export function UsersRoute(app: Application) {
 
@@ -41,6 +42,9 @@ export function UsersRoute(app: Application) {
 
 
       app.post('/students/particulars/create/:id',addStudentParticular)
+
+
+      app.delete('/students/delete/many',middleware,deleteAuths)
 
 
 
