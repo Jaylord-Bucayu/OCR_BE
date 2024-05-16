@@ -175,7 +175,7 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
     const existingEnrollment = await Results.find({
       
       bookId,
-    }).populate("studentId");
+    }).populate("studentId").populate("bookId");
 
     console.log(customReq.auth.id)
     res.status(200).json(existingEnrollment);
