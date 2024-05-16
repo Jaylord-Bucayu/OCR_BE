@@ -7,6 +7,7 @@ import {
   deleteCompletedReading,
   getAllStudentEnrolledBooks,
   scoreReading,
+  deleteAllAttemptsInBook
 } from "../controllers/results.controller";
 import middleware from "../middleware/auth";
 
@@ -39,6 +40,8 @@ export function ReadingRoute(app: Application) {
   app.post("/books/students/enrolled",middleware, getAllStudentEnrolledBooks);
 
   app.post("/books/student/score", scoreReading)
+
+  app.delete('/books/attempts/delete',middleware,deleteAllAttemptsInBook)
 
  
 }

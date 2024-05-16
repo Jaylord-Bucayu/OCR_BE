@@ -201,3 +201,27 @@ export async function getAllStudentEnrolledBooks(req: Request, res: Response) {
         res.status(500).send('Error updating completed reading');
     }
   }
+
+
+  export async function deleteAllAttemptsInBook(req: Request, res: Response) {
+    try {
+        const { ids } = req.body;
+  
+        // Delete auth records matching the given IDs
+        const authResult = await Results.deleteMany({ _id: { $in: ids } });
+   
+  
+        // Check if any records were deleted
+        if (authResult.deletedCount === 0) {
+            return res.status(404).json({ message: "No records found to delete" });
+        }
+  
+        // Return success response
+        return res.status(200).json({ message: "Students attempt records deleted successfully" });
+  
+    } catch (err) {
+        console.error('Error deleting attempt:', err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+  
