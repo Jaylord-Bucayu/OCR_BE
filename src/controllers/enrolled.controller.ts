@@ -173,14 +173,36 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
     if (!customReq.auth || !customReq.auth.id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-  
-    const existingEnrollment = await Results.find({
-      
-      bookId,
-    }).populate("studentId").populate("bookId");
 
-    console.log(customReq.auth.id)
-    res.status(200).json(existingEnrollment);
+    // Fetch all enrolled students for the given book ID
+    const enrollments = await EnrolledBook.find({ bookId })
+      .populate("studentId")
+      .populate("bookId");
+
+    // Fetch all results for the given book ID
+    const results = await Results.find({ bookId })
+      .populate("studentId")
+      .populate("bookId");
+
+    // Create a map of results by student ID
+    const resultsMap = new Map();
+    results.forEach((result:any) => {
+      resultsMap.set(result.studentId._id.toString(), result);
+    });
+
+    // Combine enrollments and results
+    const combinedData = enrollments.map(enrollment => {
+      const studentId = enrollment.studentId._id.toString();
+      const result = resultsMap.get(studentId);
+
+      return {
+        ...enrollment.toObject(),
+        attempts: result ? result.attempts : [],
+        final_score: result ? result.final_score : 0,
+      };
+    });
+
+    res.status(200).json(combinedData);
   } catch (error) {
     console.error("Error fetching the book:", error);
     res.status(500).send("Error fetching the book");
