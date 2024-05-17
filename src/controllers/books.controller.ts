@@ -13,6 +13,8 @@ const ElevenLabs = require("elevenlabs-node");
 import axios from 'axios';
 // import path from 'path'
 import { createWorker } from 'tesseract.js';
+import Results from "../models/results";
+import EnrolledBook from "../models/enrolled";
 
 
 
@@ -327,7 +329,10 @@ export async function deleteSingleBook(req: Request, res: Response) {
     if (!deletedPage) {
       return res.status(404).send('Page not found');
     }
-
+   
+     await Results.deleteMany({bookId:params.id});
+     await EnrolledBook.deleteMany({bookId:params.id});
+    
     res.status(200).send('Page deleted successfully');
   } catch (error) {
     console.error(error);
