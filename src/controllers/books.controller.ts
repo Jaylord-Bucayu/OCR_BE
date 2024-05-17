@@ -261,8 +261,10 @@ export async function getSingleBookPage(req: Request, res: Response) {
   const page = await Books.findById(params.id);
 
   if (!page) {
-      return res.status(404).send('Page not found');
+      return res.status(404).send({message:'Page not found'});
   }
+  
+  if(!page.isPublic) return res.status(403).send({ message: 'Forbidden: Book is not found' });
 
   // Ensure that query.page is a number or default to 0
   let audioIndex: number;

@@ -32,7 +32,7 @@ export async function saveCompletedReading(req: Request, res: Response) {
                 const newResult = new Results({
                     studentId,
                     bookId,
-                    attempts: [{ score, timeSpent, date: Date.now() }]
+                    attempts: [{ score, timeSpent, date: Date.now(),pauses }]
                 });
                 await newResult.save();
 

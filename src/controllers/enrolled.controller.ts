@@ -186,12 +186,17 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
 
     // Create a map of results by student ID
     const resultsMap = new Map();
-    results.forEach((result:any) => {
-      resultsMap.set(result.studentId._id.toString(), result);
+    results.forEach((result: any) => {
+      if (result.studentId) {
+        resultsMap.set(result.studentId._id.toString(), result);
+      }
     });
 
+    // Filter out enrollments where studentId is null after population
+    const filteredEnrollments = enrollments.filter(enrollment => enrollment.studentId !== null);
+
     // Combine enrollments and results
-    const combinedData = enrollments.map(enrollment => {
+    const combinedData = filteredEnrollments.map(enrollment => {
       const studentId = enrollment.studentId._id.toString();
       const result = resultsMap.get(studentId);
 
@@ -208,6 +213,5 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
     res.status(500).send("Error fetching the book");
   }
 }
-
 
 
