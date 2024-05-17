@@ -188,25 +188,28 @@ export async function getAllBook(req: Request, res: Response) {
   res.send(book)
 
 }
-
 export async function getSingleBook(req: Request, res: Response) {
-
   try {
-    const params = req.params;
-    const book = await Books.findById(params.id);
+    const { id } = req.params;
+
+    // Find the book by ID
+    const book = await Books.findById(id);
 
     if (!book) {
-        return res.status(404).send({ error: 'No book found with the provided ID' });
+      return res.status(404).send({ message: 'Book not found' });
+    }
+
+    // Check if the book is public
+    if (!book.isPublic) {
+      return res.status(403).send({ message: 'Book not found' });
     }
 
     res.send(book);
-} catch (error) {
-    // console.error('Error fetching book:', error);
-    res.status(500).send({ error: 'No book found with the provided ID' });
+  } catch (error) {
+    console.error('Error fetching book:', error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
 }
-
-}
-
 
 
 export async function updateSingleBook(req: Request, res: Response) {
