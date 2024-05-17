@@ -199,10 +199,7 @@ export async function getSingleBook(req: Request, res: Response) {
       return res.status(404).send({ message: 'Book not found' });
     }
 
-    // Check if the book is public
-    if (!book.isPublic) {
-      return res.status(403).send({ message: 'Book not found' });
-    }
+   
 
     res.send(book);
   } catch (error) {
