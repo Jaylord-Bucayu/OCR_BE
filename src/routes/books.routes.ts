@@ -13,7 +13,7 @@ import {
     deleteSinglePage,
     deleteSingleBook,
     getAllBooksPublishedByUser,
-    
+    elevenLabsCredit
 
 } from "../controllers/books.controller";
 
@@ -36,6 +36,7 @@ export function BooksRoutes(app: Application) {
     createBook
     );
     
+    app.post("/tara/credits",middleware,elevenLabsCredit)
 
     app.patch("/book/:bookId/single/edit/page/:pageId",editSinglePage)
     app.post("/book/:bookId/single/add/page",addSinglePage)

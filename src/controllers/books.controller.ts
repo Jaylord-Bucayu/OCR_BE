@@ -668,5 +668,38 @@ export async function getAllBooksPublishedByUser(req: Request, res: Response) {
   }
 }
 
+export async function elevenLabsCredit(_: Request, res: Response) {
+
+  try {
+  const response = await axios.get(
+    "https://api.elevenlabs.io/v1/user/subscription",
+    {
+      headers: {
+        "xi-api-key": process.env.ELEVEN_LABS_KEY,
+      },
+    }
+  );
+
+   // Extract character count and limit from response data
+   const { character_count, character_limit } = response.data;
+
+   // Calculate percentage used
+   const percentageUsed = (character_count / character_limit) * 100;
+
+   // Add percentage to response data
+   const responseDataWithPercentage = {
+     ...response.data,
+     percentage_used: percentageUsed.toFixed(2), // formatted to two decimal places
+   };
+
+   res.send(responseDataWithPercentage);
+
+  } catch (error) {
+    console.error('Error fetching Eleven Labs credit:', error);
+    res.status(500).send('Error fetching Eleven Labs credit');
+  }
+
+}
+
 
 
