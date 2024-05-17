@@ -50,6 +50,49 @@ export async function saveCompletedReading(req: Request, res: Response) {
     }
 }
 
+export async function editAttempt(req: Request, res: Response) {
+    try {
+        const { studentId, bookId, score, timeSpent, pauses, attemptId } = req.body;
+
+        // Check if the book exists
+        const book = await Books.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ message: "Book not found" });
+        }
+
+        // Check if the attemptId is provided
+        if (!attemptId) {
+            return res.status(400).json({ message: "Attempt ID is required for editing an attempt" });
+        }
+
+        // Find the result for the given studentId and bookId
+        const result = await Results.findOne({ studentId, bookId });
+        if (!result) {
+            return res.status(404).json({ message: "Result not found for the given student and book" });
+        }
+
+        // Find the attempt in the result and update it
+        const attempt = result.attempts.find((attempt: any) => attempt._id.toString() === attemptId);
+        if (!attempt) {
+            return res.status(404).json({ message: "Attempt not found" });
+        }
+
+        // Update the attempt with the provided data
+        attempt.score = score;
+        attempt.timeSpent = timeSpent;
+        attempt.date = Date.now();
+        attempt.pauses = pauses;
+
+        // Save the updated result
+        await result.save();
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error('Error editing attempt:', error);
+        res.status(500).send('Error editing attempt');
+    }
+}
+
 
 export async function getCompletedReading(_: Request, res: Response) {
     try {
