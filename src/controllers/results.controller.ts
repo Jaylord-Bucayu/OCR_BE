@@ -78,8 +78,8 @@ export async function editAttempt(req: Request, res: Response) {
         }
 
         // Update the attempt with the provided data
-        attempt.score = score;
-        attempt.timeSpent = timeSpent;
+        attempt.score = score | 0;
+        attempt.timeSpent = timeSpent | 0;
         attempt.date = Date.now();
         attempt.pauses = pauses;
 
