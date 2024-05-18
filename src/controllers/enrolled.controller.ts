@@ -185,7 +185,7 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
       .populate("bookId");
 
     // Create a map of results by student ID
-    const resultsMap = new Map();
+    const resultsMap = new Map<string, any>();
     results.forEach((result: any) => {
       if (result.studentId) {
         resultsMap.set(result.studentId._id.toString(), result);
@@ -200,8 +200,21 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
       const studentId = enrollment.studentId._id.toString();
       const result = resultsMap.get(studentId);
 
+      // Convert studentId.data from Map to object if it exists
+       // @ts-ignore
+      const studentData = enrollment.studentId.data instanceof Map
+       // @ts-ignore
+        ? Object.fromEntries(enrollment.studentId.data.entries())
+         // @ts-ignore
+        : enrollment.studentId.data;
+
       return {
         ...enrollment.toObject(),
+        studentId: {
+           // @ts-ignore
+          ...enrollment.studentId.toObject(),
+          data: studentData,
+        },
         attempts: result ? result.attempts : [],
         final_score: result ? result.final_score : 0,
       };
@@ -213,5 +226,3 @@ export async function getStudentAllEnrolledBook(req: Request, res: Response) {
     res.status(500).send("Error fetching the book");
   }
 }
-
-
