@@ -8,6 +8,7 @@ const attemptSchema = new mongoose.Schema({
     },
     timeSpent: {
         type: Number,
+        
       
     },
     date: {

@@ -52,7 +52,7 @@ export async function saveCompletedReading(req: Request, res: Response) {
 
 export async function editAttempt(req: Request, res: Response) {
     try {
-        const { studentId, bookId, score, timeSpent, pauses, attemptId } = req.body;
+        const { studentId, bookId, score = 0, timeSpent, pauses, attemptId } = req.body;
 
         // Check if the book exists
         const book = await Books.findById(bookId);
