@@ -486,6 +486,11 @@ export async function deleteSinglePage(req: Request, res: Response) {
   try {
     const { bookId, pageId }: any = req.params;
 
+    console.log(bookId, pageId);
+
+
+ 
+
     // Retrieve the book
     const book = await Books.findById(bookId);
 
@@ -498,19 +503,26 @@ export async function deleteSinglePage(req: Request, res: Response) {
       return res.status(500).send({ error: 'Invalid page data in the book' });
     }
 
-    // Find the page to delete
-    const deletedPage = book.page.splice(pageId - 1, 1)[0]; // Assuming pageId is 1-based index
+    // Validate pageId
+    const pageIndex = parseInt(pageId, 10) - 1; // Convert to 0-based index
+    if (isNaN(pageIndex) || pageIndex < 0 || pageIndex >= book.page.length) {
+      return res.status(404).send({ error: 'No page found with the provided ID' });
+    }
 
-    if (!deletedPage) {
+    // Find the page to delete
+    const deletedPage = book.page.splice(pageIndex, 1)[0]; // 0-based index
+
+    // Note: deletedPage can be an empty string, and it is a valid deletion
+    if (deletedPage === undefined) {
       return res.status(404).send({ error: 'No page found with the provided ID' });
     }
 
     // Update audio and timestamp arrays accordingly
-    if (Array.isArray(book.audio)) {
-      book.audio.splice(pageId - 1, 1);
+    if (Array.isArray(book.audio) && pageIndex < book.audio.length) {
+      book.audio.splice(pageIndex, 1);
     }
-    if (Array.isArray(book.timestamp)) {
-      book.timestamp.splice(pageId - 1, 1);
+    if (Array.isArray(book.timestamp) && pageIndex < book.timestamp.length) {
+      book.timestamp.splice(pageIndex, 1);
     }
 
     // Save the updated book
